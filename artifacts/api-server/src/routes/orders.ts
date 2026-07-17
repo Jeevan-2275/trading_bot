@@ -70,15 +70,19 @@ function runBotCLI(args: string[]): Promise<Record<string, unknown>> {
 
     proc.on("close", () => {
       try {
-        const jsonMatch = stdout.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          resolve(JSON.parse(jsonMatch[0]));
+        // The bot may mix Rich console output with JSON on stdout.
+        // Find the LAST line that looks like a JSON object — that's the --json output.
+        const lines = stdout.split("\n").map((l) => l.trim());
+        const jsonLine = [...lines].reverse().find((l) => l.startsWith("{") && l.endsWith("}"));
+        if (jsonLine) {
+          resolve(JSON.parse(jsonLine));
         } else {
           logger.warn({ stdout, stderr }, "Bot produced no JSON output");
           resolve({ success: false, message: stderr || stdout || "No output from bot" });
         }
-      } catch {
-        reject(new Error(`Failed to parse bot output: ${stdout}`));
+      } catch (e) {
+        logger.warn({ stdout, stderr, err: e }, "Bot JSON parse error");
+        resolve({ success: false, message: `Bot output parse error: ${e}` });
       }
     });
 
