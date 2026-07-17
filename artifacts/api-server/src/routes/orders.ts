@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { createHmac } from "crypto";
+import path from "path";
 import { db } from "@workspace/db";
 import { ordersTable } from "@workspace/db";
 import { eq, desc } from "drizzle-orm";
@@ -273,8 +274,6 @@ router.get("/:id", async (req, res) => {
   return res.json(serializeOrder(row));
 });
 
-// Keep LOG_FILE export so other modules that import it don't break
-import path from "path";
 const WORKSPACE_ROOT = path.resolve(process.cwd(), "../..");
 export const LOG_FILE = path.join(WORKSPACE_ROOT, "trading_bot", "trading_bot.log");
 
