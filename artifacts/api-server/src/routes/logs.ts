@@ -6,9 +6,8 @@ import { GetLogsQueryParams } from "@workspace/api-zod";
 
 const router = Router();
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-// __dirname = …/artifacts/api-server/src/routes  →  ../../../.. = workspace root
-const WORKSPACE_ROOT = path.resolve(__dirname, "../../../..");
+// process.cwd() = artifacts/api-server/ when run via pnpm (dev, start, or tsx)
+const WORKSPACE_ROOT = path.resolve(process.cwd(), "../..");
 const LOG_FILE = path.join(WORKSPACE_ROOT, "trading_bot", "trading_bot.log");
 
 const LOG_LEVEL_RE = /^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+) - (DEBUG|INFO|WARNING|ERROR|CRITICAL) - \[([^\]]+)\] - (.+)$/;
