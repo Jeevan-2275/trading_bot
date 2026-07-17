@@ -1,7 +1,5 @@
 import { Router } from "express";
-import { spawn } from "child_process";
-import path from "path";
-import fs from "fs";
+import { createHmac } from "crypto";
 import { db } from "@workspace/db";
 import { ordersTable } from "@workspace/db";
 import { eq, desc } from "drizzle-orm";
@@ -14,22 +12,7 @@ import { logger } from "../lib/logger";
 
 const router = Router();
 
-// process.cwd() = artifacts/api-server/ when run via pnpm (dev, start, or tsx)
-const WORKSPACE_ROOT = path.resolve(process.cwd(), "../..");
-const BOT_DIR = path.join(WORKSPACE_ROOT, "trading_bot");
-const LOG_FILE = path.join(BOT_DIR, "trading_bot.log");
-
-// Augment PATH so python3 is resolvable inside spawn() on any platform
-const PYTHON_EXTRA_PATHS = [
-  path.join(WORKSPACE_ROOT, ".pythonlibs", "bin"), // Replit
-  "/usr/local/bin",                                 // Render / Linux
-  "/usr/bin",
-  "/bin",
-].join(":");
-const SPAWN_PATH = PYTHON_EXTRA_PATHS + (process.env.PATH ? `:${process.env.PATH}` : "");
-
-// Local Python packages directory (installed with pip --target during Render build)
-const PYTHON_PACKAGES_DIR = path.join(WORKSPACE_ROOT, "python_packages");
+const BINANCE_BASE = "https://testnet.binancefuture.com";
 
 // In-memory credential store (session only)
 let runtimeApiKey = process.env.BINANCE_API_KEY || "";
@@ -40,67 +23,151 @@ export function setCredentials(key: string, secret: string) {
   runtimeApiSecret = secret;
 }
 
-/**
- * Run the Python bot CLI and return parsed JSON output
- */
-function runBotCLI(args: string[]): Promise<Record<string, unknown>> {
-  return new Promise((resolve, reject) => {
-    const env = {
-      ...process.env,
-      PATH: SPAWN_PATH,
-      BINANCE_API_KEY: runtimeApiKey,
-      BINANCE_API_SECRET: runtimeApiSecret,
-      BOT_LOG_FILE: LOG_FILE,
-      // Include local packages dir (Render --target install) + bot dir + any existing PYTHONPATH
-      PYTHONPATH: [PYTHON_PACKAGES_DIR, BOT_DIR, process.env.PYTHONPATH]
-        .filter(Boolean)
-        .join(":"),
-    };
+// ---------------------------------------------------------------------------
+// Binance Futures Testnet client (pure Node.js — no Python subprocess needed)
+// ---------------------------------------------------------------------------
 
-    // Use shell:true so the system shell resolves python3 from PATH correctly
-    // (Render's runtime may use pyenv or non-standard install paths)
-    const cliPath = path.join(BOT_DIR, "cli.py");
-    const quotedArgs = ["--json", ...args].map((a) => `'${String(a).replace(/'/g, "'\\''")}'`).join(" ");
-    const proc = spawn(`python3 '${cliPath}' ${quotedArgs}`, [], {
-      env,
-      cwd: BOT_DIR,
-      shell: true,
-    });
-
-    let stdout = "";
-    let stderr = "";
-
-    proc.stdout.on("data", (data: Buffer) => {
-      stdout += data.toString();
-    });
-
-    proc.stderr.on("data", (data: Buffer) => {
-      stderr += data.toString();
-    });
-
-    proc.on("close", () => {
-      try {
-        // The bot may mix Rich console output with JSON on stdout.
-        // Find the LAST line that looks like a JSON object — that's the --json output.
-        const lines = stdout.split("\n").map((l) => l.trim());
-        const jsonLine = [...lines].reverse().find((l) => l.startsWith("{") && l.endsWith("}"));
-        if (jsonLine) {
-          resolve(JSON.parse(jsonLine));
-        } else {
-          logger.warn({ stdout, stderr }, "Bot produced no JSON output");
-          resolve({ success: false, message: stderr || stdout || "No output from bot" });
-        }
-      } catch (e) {
-        logger.warn({ stdout, stderr, err: e }, "Bot JSON parse error");
-        resolve({ success: false, message: `Bot output parse error: ${e}` });
-      }
-    });
-
-    proc.on("error", (err: Error) => {
-      reject(err);
-    });
-  });
+/** Fetch Binance server time and return local→server offset in ms */
+async function getBinanceTimeOffset(): Promise<number> {
+  try {
+    const localBefore = Date.now();
+    const res = await fetch(`${BINANCE_BASE}/fapi/v1/time`);
+    const localAfter = Date.now();
+    if (!res.ok) return 0;
+    const data = (await res.json()) as { serverTime: number };
+    const transit = Math.floor((localAfter - localBefore) / 2);
+    return data.serverTime - (localBefore + transit);
+  } catch {
+    return 0;
+  }
 }
+
+function hmacSha256(secret: string, message: string): string {
+  return createHmac("sha256", secret).update(message).digest("hex");
+}
+
+interface BinanceOrderResult {
+  success: boolean;
+  test_mode: boolean;
+  order_id?: number | null;
+  status?: string;
+  executed_qty?: string;
+  avg_price?: string;
+  message: string;
+  data?: Record<string, unknown>;
+}
+
+async function placeBinanceOrder(
+  apiKey: string,
+  apiSecret: string,
+  symbol: string,
+  side: string,
+  orderType: string,
+  quantity: number,
+  price: number | null | undefined,
+  stopPrice: number | null | undefined,
+  testMode: boolean
+): Promise<BinanceOrderResult> {
+  if (!apiKey || !apiSecret) {
+    return {
+      success: false,
+      test_mode: testMode,
+      message:
+        "API credentials not found. Set BINANCE_API_KEY and BINANCE_API_SECRET in Render → Environment.",
+    };
+  }
+
+  // Sync timestamp
+  const offset = await getBinanceTimeOffset();
+  const timestamp = Date.now() + offset;
+
+  // Build params
+  const params: Record<string, string> = {
+    symbol,
+    side,
+    type: orderType,
+    quantity: String(quantity),
+    timestamp: String(timestamp),
+  };
+  if (orderType === "LIMIT" && price != null) {
+    params.price = String(price);
+    params.timeInForce = "GTC";
+  }
+  if (orderType === "STOP_MARKET" && stopPrice != null) {
+    params.stopPrice = String(stopPrice);
+  }
+
+  // Sign
+  const queryString = new URLSearchParams(params).toString();
+  const signature = hmacSha256(apiSecret, queryString);
+  params.signature = signature;
+
+  const endpoint = testMode ? "/fapi/v1/order/test" : "/fapi/v1/order";
+  const url = `${BINANCE_BASE}${endpoint}`;
+
+  logger.info({ symbol, side, orderType, quantity, testMode, endpoint }, "Placing order via Binance API");
+
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "X-MBX-APIKEY": apiKey,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams(params).toString(),
+    });
+  } catch (err) {
+    return {
+      success: false,
+      test_mode: testMode,
+      message: `Network error contacting Binance: ${String(err)}`,
+    };
+  }
+
+  let data: Record<string, unknown> = {};
+  try {
+    data = (await res.json()) as Record<string, unknown>;
+  } catch {
+    data = { raw: await res.text().catch(() => "") };
+  }
+
+  if (!res.ok) {
+    const code = data.code ?? res.status;
+    const msg = (data.msg as string) ?? "Unknown Binance API error";
+    return {
+      success: false,
+      test_mode: testMode,
+      message: `Binance API Error (Code: ${code}): ${msg}`,
+      data,
+    };
+  }
+
+  // Test endpoint returns {} on success
+  if (testMode) {
+    return {
+      success: true,
+      test_mode: true,
+      message: "Dry-run order validation succeeded. Parameters and credentials are valid.",
+      data,
+    };
+  }
+
+  return {
+    success: true,
+    test_mode: false,
+    order_id: (data.orderId as number) ?? null,
+    status: (data.status as string) ?? "FILLED",
+    executed_qty: (data.executedQty as string) ?? "0",
+    avg_price: (data.avgPrice as string) ?? "0",
+    message: "Order executed successfully on Testnet.",
+    data,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Serialise DB row
+// ---------------------------------------------------------------------------
 
 function serializeOrder(r: typeof ordersTable.$inferSelect) {
   return {
@@ -112,6 +179,10 @@ function serializeOrder(r: typeof ordersTable.$inferSelect) {
   };
 }
 
+// ---------------------------------------------------------------------------
+// Routes
+// ---------------------------------------------------------------------------
+
 // POST /api/orders — place a new order
 router.post("/", async (req, res) => {
   const parsed = PlaceOrderBody.safeParse(req.body);
@@ -121,32 +192,26 @@ router.post("/", async (req, res) => {
 
   const { symbol, side, orderType, quantity, price, stopPrice, testMode } = parsed.data;
 
-  const args: string[] = [
-    "--symbol", symbol,
-    "--side", side,
-    "--type", orderType,
-    "--quantity", String(quantity),
-  ];
-  if (price != null) args.push("--price", String(price));
-  if (stopPrice != null) args.push("--stop-price", String(stopPrice));
-  if (testMode) args.push("--test");
+  req.log.info({ symbol, side, orderType, quantity, testMode }, "Placing order");
 
-  req.log.info({ symbol, side, orderType, quantity, testMode }, "Placing order via bot CLI");
+  const botResult = await placeBinanceOrder(
+    runtimeApiKey,
+    runtimeApiSecret,
+    symbol,
+    side,
+    orderType,
+    quantity,
+    price,
+    stopPrice,
+    testMode ?? true
+  );
 
-  let botResult: Record<string, unknown>;
-  try {
-    botResult = await runBotCLI(args);
-  } catch (err) {
-    req.log.error({ err }, "Bot CLI error");
-    return res.status(500).json({ error: "Failed to run trading bot" });
-  }
-
-  const success = botResult.success === true;
+  const success = botResult.success;
   const isTestMode = testMode ?? false;
 
   let dbStatus = "FAILED";
   if (success && isTestMode) dbStatus = "TEST_OK";
-  else if (success) dbStatus = String(botResult.status ?? "FILLED");
+  else if (success) dbStatus = botResult.status ?? "FILLED";
 
   const [savedOrder] = await db
     .insert(ordersTable)
@@ -160,9 +225,9 @@ router.post("/", async (req, res) => {
       testMode: isTestMode,
       status: dbStatus,
       orderId: botResult.order_id != null ? String(botResult.order_id) : null,
-      executedQty: botResult.executed_qty != null ? String(botResult.executed_qty) : null,
-      avgPrice: botResult.avg_price != null ? String(botResult.avg_price) : null,
-      errorMessage: !success ? String(botResult.message ?? "") : null,
+      executedQty: botResult.executed_qty ?? null,
+      avgPrice: botResult.avg_price ?? null,
+      errorMessage: !success ? botResult.message : null,
     })
     .returning();
 
@@ -208,4 +273,9 @@ router.get("/:id", async (req, res) => {
   return res.json(serializeOrder(row));
 });
 
-export { router as ordersRouter, LOG_FILE };
+// Keep LOG_FILE export so other modules that import it don't break
+import path from "path";
+const WORKSPACE_ROOT = path.resolve(process.cwd(), "../..");
+export const LOG_FILE = path.join(WORKSPACE_ROOT, "trading_bot", "trading_bot.log");
+
+export { router as ordersRouter };
