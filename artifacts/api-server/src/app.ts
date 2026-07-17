@@ -37,7 +37,10 @@ app.use("/api", router);
 // The frontend is built into artifacts/trading-dashboard/dist by the
 // Render build step and copied to dist/public alongside the API bundle.
 if (process.env.NODE_ENV === "production") {
-  const frontendDir = path.resolve(__dirname, "public");
+  // Works for both esbuild bundle (__dirname = dist/) and tsx source (__dirname = src/)
+  const frontendDir = fs.existsSync(path.resolve(__dirname, "public"))
+    ? path.resolve(__dirname, "public")
+    : path.resolve(__dirname, "../public");
   if (fs.existsSync(frontendDir)) {
     app.use(express.static(frontendDir));
     // SPA fallback — serve index.html for any non-API route
