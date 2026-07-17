@@ -46,7 +46,7 @@ if (process.env.NODE_ENV === "production") {
   if (fs.existsSync(frontendDir)) {
     app.use(express.static(frontendDir));
     // SPA fallback — serve index.html for any non-API route
-    app.get("*", (_req, res) => {
+    app.get(/(.*)/, (_req, res) => {
       res.sendFile(path.join(frontendDir, "index.html"));
     });
   }
