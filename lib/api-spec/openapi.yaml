@@ -3,13 +3,19 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Trading Bot API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: orders
+    description: Order placement and history
+  - name: logs
+    description: Log entries
+  - name: credentials
+    description: API credential management
 paths:
   /healthz:
     get:
@@ -24,6 +30,145 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /orders:
+    get:
+      operationId: listOrders
+      tags: [orders]
+      summary: List all placed orders
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Order"
+    post:
+      operationId: placeOrder
+      tags: [orders]
+      summary: Place a new trading order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderInput"
+      responses:
+        "200":
+          description: Order result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderResult"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /orders/{id}:
+    get:
+      operationId: getOrder
+      tags: [orders]
+      summary: Get a specific order by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Order details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /logs:
+    get:
+      operationId: getLogs
+      tags: [logs]
+      summary: Get recent log entries from the trading bot log file
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: level
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Log entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LogEntry"
+
+  /credentials:
+    get:
+      operationId: getCredentialsStatus
+      tags: [credentials]
+      summary: Check if Binance API credentials are configured
+      responses:
+        "200":
+          description: Credentials status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CredentialsStatus"
+    post:
+      operationId: saveCredentials
+      tags: [credentials]
+      summary: Save Binance API credentials (stored in server env only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CredentialsInput"
+      responses:
+        "200":
+          description: Credentials saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CredentialsStatus"
+
+  /stats:
+    get:
+      operationId: getStats
+      tags: [orders]
+      summary: Get aggregated order statistics
+      responses:
+        "200":
+          description: Order statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderStats"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +179,146 @@ components:
       required:
         - status
 
+    OrderInput:
+      type: object
+      required: [symbol, side, orderType, quantity]
+      properties:
+        symbol:
+          type: string
+          description: Trading pair symbol (e.g. BTCUSDT)
+        side:
+          type: string
+          enum: [BUY, SELL]
+        orderType:
+          type: string
+          enum: [MARKET, LIMIT, STOP_MARKET]
+        quantity:
+          type: number
+        price:
+          type: ["number", "null"]
+          description: Required for LIMIT orders
+        stopPrice:
+          type: ["number", "null"]
+          description: Required for STOP_MARKET orders
+        testMode:
+          type: boolean
+          description: If true, uses Binance test endpoint (no real trade)
+
+    Order:
+      type: object
+      required: [id, symbol, side, orderType, quantity, status, testMode, createdAt]
+      properties:
+        id:
+          type: integer
+        symbol:
+          type: string
+        side:
+          type: string
+        orderType:
+          type: string
+        quantity:
+          type: number
+        price:
+          type: ["number", "null"]
+        stopPrice:
+          type: ["number", "null"]
+        testMode:
+          type: boolean
+        status:
+          type: string
+        orderId:
+          type: ["string", "null"]
+        executedQty:
+          type: ["string", "null"]
+        avgPrice:
+          type: ["string", "null"]
+        errorMessage:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    OrderResult:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+        testMode:
+          type: boolean
+        orderId:
+          type: ["string", "null"]
+        status:
+          type: ["string", "null"]
+        executedQty:
+          type: ["string", "null"]
+        avgPrice:
+          type: ["string", "null"]
+        message:
+          type: ["string", "null"]
+        order:
+          $ref: "#/components/schemas/Order"
+
+    LogEntry:
+      type: object
+      required: [timestamp, level, message]
+      properties:
+        timestamp:
+          type: string
+        level:
+          type: string
+        filename:
+          type: ["string", "null"]
+        message:
+          type: string
+
+    CredentialsStatus:
+      type: object
+      required: [configured, hasApiKey, hasApiSecret]
+      properties:
+        configured:
+          type: boolean
+        hasApiKey:
+          type: boolean
+        hasApiSecret:
+          type: boolean
+        message:
+          type: string
+
+    CredentialsInput:
+      type: object
+      required: [apiKey, apiSecret]
+      properties:
+        apiKey:
+          type: string
+        apiSecret:
+          type: string
+
+    OrderStats:
+      type: object
+      required: [total, successful, failed, byType, bySide, testOrders, realOrders]
+      properties:
+        total:
+          type: integer
+        successful:
+          type: integer
+        failed:
+          type: integer
+        testOrders:
+          type: integer
+        realOrders:
+          type: integer
+        byType:
+          type: object
+          additionalProperties:
+            type: integer
+        bySide:
+          type: object
+          additionalProperties:
+            type: integer
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
