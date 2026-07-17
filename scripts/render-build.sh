@@ -5,8 +5,8 @@ set -e
 echo "==> Installing Node dependencies..."
 pnpm install --frozen-lockfile
 
-echo "==> Installing Python dependencies..."
-pip3 install -r trading_bot/requirements.txt || echo "WARNING: Python deps failed, continuing"
+echo "==> Installing Python dependencies into ./python_packages (portable across build/runtime)..."
+pip3 install --target=./python_packages -r trading_bot/requirements.txt || echo "WARNING: Python deps failed, continuing"
 
 echo "==> Building shared TypeScript libs..."
 pnpm run typecheck:libs

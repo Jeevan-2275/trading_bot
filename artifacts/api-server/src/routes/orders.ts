@@ -28,6 +28,9 @@ const PYTHON_EXTRA_PATHS = [
 ].join(":");
 const SPAWN_PATH = PYTHON_EXTRA_PATHS + (process.env.PATH ? `:${process.env.PATH}` : "");
 
+// Local Python packages directory (installed with pip --target during Render build)
+const PYTHON_PACKAGES_DIR = path.join(WORKSPACE_ROOT, "python_packages");
+
 // In-memory credential store (session only)
 let runtimeApiKey = process.env.BINANCE_API_KEY || "";
 let runtimeApiSecret = process.env.BINANCE_API_SECRET || "";
@@ -48,7 +51,10 @@ function runBotCLI(args: string[]): Promise<Record<string, unknown>> {
       BINANCE_API_KEY: runtimeApiKey,
       BINANCE_API_SECRET: runtimeApiSecret,
       BOT_LOG_FILE: LOG_FILE,
-      PYTHONPATH: BOT_DIR,
+      // Include local packages dir (Render --target install) + bot dir + any existing PYTHONPATH
+      PYTHONPATH: [PYTHON_PACKAGES_DIR, BOT_DIR, process.env.PYTHONPATH]
+        .filter(Boolean)
+        .join(":"),
     };
 
     const proc = spawn("python3", [path.join(BOT_DIR, "cli.py"), "--json", ...args], {

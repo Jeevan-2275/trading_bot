@@ -96,10 +96,16 @@ export default function PlaceOrder() {
         }
       },
       onError: (error) => {
+        // ApiError stores server message in .data.error; fall back to .message then generic
+        const detail =
+          (error as any)?.data?.error ||
+          (error as any)?.data?.message ||
+          (error as any)?.message ||
+          "Failed to connect to API";
         toast({
           variant: "destructive",
           title: "API Error",
-          description: error?.error || "Failed to connect to API",
+          description: detail,
         });
       }
     });
