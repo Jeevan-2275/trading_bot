@@ -25,7 +25,6 @@ echo "==> Copying frontend into API server dist/public..."
 mkdir -p artifacts/api-server/dist/public
 cp -r artifacts/trading-dashboard/dist/. artifacts/api-server/dist/public/
 
-echo "==> Running database migrations..."
-pnpm --filter @workspace/db run push
+echo "==> Skipping database migrations (will run at startup)..."
 
 echo "==> Build complete!"
