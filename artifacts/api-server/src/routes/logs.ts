@@ -5,8 +5,9 @@ import { GetLogsQueryParams } from "@workspace/api-zod";
 
 const router = Router();
 
-const BOT_DIR = path.resolve(process.cwd(), "trading_bot");
-const LOG_FILE = path.resolve(BOT_DIR, "trading_bot.log");
+// __dirname = …/artifacts/api-server/dist  →  ../../.. = workspace root
+const WORKSPACE_ROOT = path.resolve(__dirname, "../../..");
+const LOG_FILE = path.join(WORKSPACE_ROOT, "trading_bot", "trading_bot.log");
 
 const LOG_LEVEL_RE = /^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+) - (DEBUG|INFO|WARNING|ERROR|CRITICAL) - \[([^\]]+)\] - (.+)$/;
 

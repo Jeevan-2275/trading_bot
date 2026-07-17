@@ -14,8 +14,20 @@ import { logger } from "../lib/logger";
 
 const router = Router();
 
-const BOT_DIR = path.resolve(process.cwd(), "trading_bot");
-const LOG_FILE = path.resolve(BOT_DIR, "trading_bot.log");
+// __dirname = …/artifacts/api-server/dist  →  ../../.. = workspace root
+const WORKSPACE_ROOT = path.resolve(__dirname, "../../..");
+const BOT_DIR = path.join(WORKSPACE_ROOT, "trading_bot");
+const LOG_FILE = path.join(BOT_DIR, "trading_bot.log");
+
+// Augment PATH so python3 / pip packages are resolvable inside spawn()
+const PYTHON_EXTRA_PATHS = [
+  path.join(WORKSPACE_ROOT, ".pythonlibs", "bin"),
+  "/nix/var/nix/profiles/default/bin",
+  "/usr/local/bin",
+  "/usr/bin",
+  "/bin",
+].join(":");
+const SPAWN_PATH = PYTHON_EXTRA_PATHS + (process.env.PATH ? `:${process.env.PATH}` : "");
 
 // In-memory credential store (session only)
 let runtimeApiKey = process.env.BINANCE_API_KEY || "";
@@ -33,6 +45,7 @@ function runBotCLI(args: string[]): Promise<Record<string, unknown>> {
   return new Promise((resolve, reject) => {
     const env = {
       ...process.env,
+      PATH: SPAWN_PATH,
       BINANCE_API_KEY: runtimeApiKey,
       BINANCE_API_SECRET: runtimeApiSecret,
       BOT_LOG_FILE: LOG_FILE,
