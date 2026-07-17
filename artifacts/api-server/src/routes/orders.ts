@@ -57,9 +57,14 @@ function runBotCLI(args: string[]): Promise<Record<string, unknown>> {
         .join(":"),
     };
 
-    const proc = spawn("python3", [path.join(BOT_DIR, "cli.py"), "--json", ...args], {
+    // Use shell:true so the system shell resolves python3 from PATH correctly
+    // (Render's runtime may use pyenv or non-standard install paths)
+    const cliPath = path.join(BOT_DIR, "cli.py");
+    const quotedArgs = ["--json", ...args].map((a) => `'${String(a).replace(/'/g, "'\\''")}'`).join(" ");
+    const proc = spawn(`python3 '${cliPath}' ${quotedArgs}`, [], {
       env,
       cwd: BOT_DIR,
+      shell: true,
     });
 
     let stdout = "";
