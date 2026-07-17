@@ -1,0 +1,170 @@
+2026-07-17T22:35:34.235456399Z a dependency and package manager for Python.
+2026-07-17T22:35:34.235460709Z 
+2026-07-17T22:35:34.23546526Z It will add the `poetry` command to Poetry's bin directory, located at:
+2026-07-17T22:35:34.23546976Z 
+2026-07-17T22:35:34.23547412Z /opt/render/project/poetry/bin
+2026-07-17T22:35:34.235478291Z 
+2026-07-17T22:35:34.235483291Z You can uninstall at any time by executing this script with the --uninstall option,
+2026-07-17T22:35:34.235488141Z and these changes will be reverted.
+2026-07-17T22:35:34.235492622Z 
+2026-07-17T22:35:34.235496872Z Installing Poetry (2.1.3)
+2026-07-17T22:35:34.235501182Z Installing Poetry (2.1.3): Creating environment
+2026-07-17T22:35:34.235505502Z Installing Poetry (2.1.3): Installing Poetry
+2026-07-17T22:35:34.235509832Z Installing Poetry (2.1.3): Creating script
+2026-07-17T22:35:34.235523163Z Installing Poetry (2.1.3): Done
+2026-07-17T22:35:34.235526073Z 
+2026-07-17T22:35:34.235528864Z Poetry (2.1.3) is installed now. Great!
+2026-07-17T22:35:34.235531434Z 
+2026-07-17T22:35:34.235534344Z To get started you need Poetry's bin directory (/opt/render/project/poetry/bin) in your `PATH`
+2026-07-17T22:35:34.235537804Z environment variable.
+2026-07-17T22:35:34.235540514Z 
+2026-07-17T22:35:34.235543645Z Add `export PATH="/opt/render/project/poetry/bin:$PATH"` to your shell configuration file.
+2026-07-17T22:35:34.235546634Z 
+2026-07-17T22:35:34.235549605Z Alternatively, you can call Poetry explicitly with `/opt/render/project/poetry/bin/poetry`.
+2026-07-17T22:35:34.235552055Z 
+2026-07-17T22:35:34.235554675Z You can test that everything is set up by executing:
+2026-07-17T22:35:34.235557185Z 
+2026-07-17T22:35:34.235560225Z `poetry --version`
+2026-07-17T22:35:34.235562966Z 
+2026-07-17T22:35:34.317938904Z ==> Using uv version 0.10.2 (default)
+2026-07-17T22:35:34.317944844Z ==> Docs on specifying a uv version: https://render.com/docs/uv-version
+2026-07-17T22:35:34.318046341Z ==> Installing uv version 0.10.2...
+2026-07-17T22:35:35.455433479Z Collecting requests>=2.31.0 (from -r trading_bot/requirements.txt (line 1))
+2026-07-17T22:35:35.456760076Z   Using cached requests-2.34.2-py3-none-any.whl.metadata (4.8 kB)
+2026-07-17T22:35:35.480958183Z Collecting python-dotenv>=1.0.0 (from -r trading_bot/requirements.txt (line 2))
+2026-07-17T22:35:35.482099449Z   Using cached python_dotenv-1.2.2-py3-none-any.whl.metadata (27 kB)
+2026-07-17T22:35:35.526954287Z Collecting rich>=13.4.0 (from -r trading_bot/requirements.txt (line 3))
+2026-07-17T22:35:35.528088003Z   Using cached rich-15.0.0-py3-none-any.whl.metadata (18 kB)
+2026-07-17T22:35:35.639755004Z Collecting charset_normalizer<4,>=2 (from requests>=2.31.0->-r trading_bot/requirements.txt (line 1))
+2026-07-17T22:35:35.641075221Z   Using cached charset_normalizer-3.4.9-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (41 kB)
+2026-07-17T22:35:35.665694312Z Collecting idna<4,>=2.5 (from requests>=2.31.0->-r trading_bot/requirements.txt (line 1))
+2026-07-17T22:35:35.666769494Z   Using cached idna-3.18-py3-none-any.whl.metadata (6.1 kB)
+2026-07-17T22:35:35.697871913Z Collecting urllib3<3,>=1.26 (from requests>=2.31.0->-r trading_bot/requirements.txt (line 1))
+2026-07-17T22:35:35.698959116Z   Using cached urllib3-2.7.0-py3-none-any.whl.metadata (6.9 kB)
+2026-07-17T22:35:35.724283298Z Collecting certifi>=2023.5.7 (from requests>=2.31.0->-r trading_bot/requirements.txt (line 1))
+2026-07-17T22:35:35.72535558Z   Using cached certifi-2026.6.17-py3-none-any.whl.metadata (2.5 kB)
+2026-07-17T22:35:35.748411831Z Collecting markdown-it-py>=2.2.0 (from rich>=13.4.0->-r trading_bot/requirements.txt (line 3))
+2026-07-17T22:35:35.749529896Z   Using cached markdown_it_py-4.2.0-py3-none-any.whl.metadata (7.4 kB)
+2026-07-17T22:35:35.778830549Z Collecting pygments<3.0.0,>=2.13.0 (from rich>=13.4.0->-r trading_bot/requirements.txt (line 3))
+2026-07-17T22:35:35.779930303Z   Using cached pygments-2.20.0-py3-none-any.whl.metadata (2.5 kB)
+2026-07-17T22:35:35.796954402Z Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich>=13.4.0->-r trading_bot/requirements.txt (line 3))
+2026-07-17T22:35:35.798014734Z   Using cached mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+2026-07-17T22:35:35.801030329Z Using cached requests-2.34.2-py3-none-any.whl (73 kB)
+2026-07-17T22:35:35.802131183Z Using cached charset_normalizer-3.4.9-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (223 kB)
+2026-07-17T22:35:35.803353914Z Using cached idna-3.18-py3-none-any.whl (65 kB)
+2026-07-17T22:35:35.804406155Z Using cached urllib3-2.7.0-py3-none-any.whl (131 kB)
+2026-07-17T22:35:35.805541001Z Using cached python_dotenv-1.2.2-py3-none-any.whl (22 kB)
+2026-07-17T22:35:35.806570832Z Using cached rich-15.0.0-py3-none-any.whl (310 kB)
+2026-07-17T22:35:35.807860996Z Using cached pygments-2.20.0-py3-none-any.whl (1.2 MB)
+2026-07-17T22:35:35.809915136Z Using cached certifi-2026.6.17-py3-none-any.whl (133 kB)
+2026-07-17T22:35:35.811033861Z Using cached markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
+2026-07-17T22:35:35.812110763Z Using cached mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+2026-07-17T22:35:35.844079552Z Installing collected packages: urllib3, python-dotenv, pygments, mdurl, idna, charset_normalizer, certifi, requests, markdown-it-py, rich
+2026-07-17T22:35:37.333888587Z 
+2026-07-17T22:35:37.335579556Z Successfully installed certifi-2026.6.17 charset_normalizer-3.4.9 idna-3.18 markdown-it-py-4.2.0 mdurl-0.1.2 pygments-2.20.0 python-dotenv-1.2.2 requests-2.34.2 rich-15.0.0 urllib3-2.7.0
+2026-07-17T22:35:37.340917186Z 
+2026-07-17T22:35:37.340931647Z [notice] A new release of pip is available: 25.3 -> 26.1.2
+2026-07-17T22:35:37.340936447Z [notice] To update, run: pip install --upgrade pip
+2026-07-17T22:35:37.408542617Z ==> Building shared TypeScript libs...
+2026-07-17T22:35:37.749068392Z 
+2026-07-17T22:35:37.749092143Z > workspace@0.0.0 typecheck:libs /opt/render/project/src
+2026-07-17T22:35:37.749094994Z > tsc --build
+2026-07-17T22:35:37.749096994Z 
+2026-07-17T22:35:39.988217347Z ==> Building API server...
+2026-07-17T22:35:40.358284489Z 
+2026-07-17T22:35:40.35831062Z > @workspace/api-server@0.0.0 build /opt/render/project/src/artifacts/api-server
+2026-07-17T22:35:40.358314911Z > node ./build.mjs
+2026-07-17T22:35:40.358317381Z 
+2026-07-17T22:35:40.830791006Z 
+2026-07-17T22:35:40.830809087Z   dist/index.mjs                       2.2mb ⚠️
+2026-07-17T22:35:40.830812718Z   dist/pino-worker.mjs               153.4kb
+2026-07-17T22:35:40.830815038Z   dist/pino-file.mjs                 142.1kb
+2026-07-17T22:35:40.830817628Z   dist/pino-pretty.mjs               114.4kb
+2026-07-17T22:35:40.830819718Z   dist/thread-stream-worker.mjs        7.3kb
+2026-07-17T22:35:40.830824248Z   dist/index.mjs.map                   3.7mb
+2026-07-17T22:35:40.830826178Z   dist/pino-worker.mjs.map           256.9kb
+2026-07-17T22:35:40.830828158Z   dist/pino-file.mjs.map             229.0kb
+2026-07-17T22:35:40.830830019Z   dist/pino-pretty.mjs.map           203.6kb
+2026-07-17T22:35:40.830831939Z   dist/thread-stream-worker.mjs.map   12.0kb
+2026-07-17T22:35:40.830833819Z 
+2026-07-17T22:35:40.830836559Z ⚡ Done in 421ms
+2026-07-17T22:35:40.850798909Z ==> Building React frontend...
+2026-07-17T22:35:41.454591448Z vite v7.3.6 building client environment for production...
+2026-07-17T22:35:41.514055385Z transforming...
+2026-07-17T22:35:41.876721757Z src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+2026-07-17T22:35:42.308194619Z src/components/ui/select.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+2026-07-17T22:35:43.210890423Z src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+2026-07-17T22:35:44.161341853Z ✓ 2148 modules transformed.
+2026-07-17T22:35:44.417313133Z rendering chunks...
+2026-07-17T22:35:44.425644317Z computing gzip size...
+2026-07-17T22:35:44.441996008Z dist/index.html                   1.44 kB │ gzip:   0.55 kB
+2026-07-17T22:35:44.442042521Z dist/assets/index-DVrd1kvJ.css   94.87 kB │ gzip:  15.78 kB
+2026-07-17T22:35:44.442057281Z dist/assets/index-CKisMpsk.js   516.11 kB │ gzip: 158.89 kB
+2026-07-17T22:35:44.442120165Z 
+2026-07-17T22:35:44.442127526Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-07-17T22:35:44.442133786Z - Using dynamic import() to code-split the application
+2026-07-17T22:35:44.442137796Z - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+2026-07-17T22:35:44.442140946Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+2026-07-17T22:35:44.442312656Z ✓ built in 2.96s
+2026-07-17T22:35:44.580279166Z ==> Copying frontend into public dir for Express to serve...
+2026-07-17T22:35:44.584691823Z ==> Pushing database schema...
+2026-07-17T22:35:44.95862462Z 
+2026-07-17T22:35:44.958645331Z > @workspace/db@0.0.0 push /opt/render/project/src/lib/db
+2026-07-17T22:35:44.958650461Z > drizzle-kit push --config ./drizzle.config.ts
+2026-07-17T22:35:44.958652981Z 
+2026-07-17T22:35:45.104726103Z Reading config file '/opt/render/project/src/lib/db/drizzle.config.ts'
+2026-07-17T22:35:45.522312217Z Using 'pg' driver for database querying
+2026-07-17T22:35:45.791147714Z [⣷] Pulling schema from database...
+2026-07-17T22:35:45.911883313Z [⣯] Pulling schema from database...
+2026-07-17T22:35:46.040572713Z [⣟] Pulling schema from database...
+2026-07-17T22:35:46.169178759Z [⡿] Pulling schema from database...
+2026-07-17T22:35:46.191444774Z [✓] Pulling schema from database...
+2026-07-17T22:35:46.196389001Z [i] No changes detected
+2026-07-17T22:35:46.236840653Z ==> Build complete!
+2026-07-17T22:35:49.276580361Z ==> Uploading build...
+2026-07-17T22:36:00.433927119Z ==> Uploaded in 5.3s. Compression took 5.8s
+2026-07-17T22:36:00.971433934Z ==> Build successful 🎉
+2026-07-17T22:36:03.090308527Z ==> Deploying...
+2026-07-17T22:36:03.156931707Z ==> Setting WEB_CONCURRENCY=1 by default, based on available CPUs in the instance
+2026-07-17T22:36:34.600597617Z ==> Running 'node artifacts/api-server/dist/index.mjs'
+2026-07-17T22:36:35.715613283Z file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20149
+2026-07-17T22:36:35.715641234Z               throw new PathError(`Missing parameter name at index ${index}`, str);
+2026-07-17T22:36:35.715657644Z                     ^
+2026-07-17T22:36:35.715660874Z 
+2026-07-17T22:36:35.715663974Z PathError [TypeError]: Missing parameter name at index 1: *; visit https://git.new/pathToRegexpError for info
+2026-07-17T22:36:35.715671834Z     at consumeUntil (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20149:21)
+2026-07-17T22:36:35.715674184Z     at parse3 (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20174:28)
+2026-07-17T22:36:35.715676614Z     at process2 (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20285:58)
+2026-07-17T22:36:35.715678785Z     at pathToRegexp (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20296:7)
+2026-07-17T22:36:35.715680914Z     at Object.match (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20250:32)
+2026-07-17T22:36:35.715683305Z     at matcher (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20479:27)
+2026-07-17T22:36:35.715685575Z     at new Layer (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20486:68)
+2026-07-17T22:36:35.715687835Z     at router7.route (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20911:21)
+2026-07-17T22:36:35.715689985Z     at app2.route (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:21220:26)
+2026-07-17T22:36:35.715692135Z     at app2.<computed> [as get] (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:21283:26) {
+2026-07-17T22:36:35.715694365Z   originalPath: '*'
+2026-07-17T22:36:35.715696595Z }
+2026-07-17T22:36:35.715698655Z 
+2026-07-17T22:36:35.715700885Z Node.js v24.14.1
+2026-07-17T22:36:37.647941359Z ==> Exited with status 1
+2026-07-17T22:36:37.650919139Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+2026-07-17T22:36:43.157243778Z ==> Running 'node artifacts/api-server/dist/index.mjs'
+2026-07-17T22:36:44.246957405Z file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20149
+2026-07-17T22:36:44.246987396Z               throw new PathError(`Missing parameter name at index ${index}`, str);
+2026-07-17T22:36:44.246991486Z                     ^
+2026-07-17T22:36:44.246994166Z 
+2026-07-17T22:36:44.246998246Z PathError [TypeError]: Missing parameter name at index 1: *; visit https://git.new/pathToRegexpError for info
+2026-07-17T22:36:44.247003127Z     at consumeUntil (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20149:21)
+2026-07-17T22:36:44.247006467Z     at parse3 (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20174:28)
+2026-07-17T22:36:44.247009347Z     at process2 (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20285:58)
+2026-07-17T22:36:44.247012187Z     at pathToRegexp (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20296:7)
+2026-07-17T22:36:44.247015467Z     at Object.match (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20250:32)
+2026-07-17T22:36:44.247018707Z     at matcher (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20479:27)
+2026-07-17T22:36:44.247021957Z     at new Layer (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20486:68)
+2026-07-17T22:36:44.247023977Z     at router7.route (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:20911:21)
+2026-07-17T22:36:44.247025817Z     at app2.route (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:21220:26)
+2026-07-17T22:36:44.247027747Z     at app2.<computed> [as get] (file:///opt/render/project/src/artifacts/api-server/dist/index.mjs:21283:26) {
+2026-07-17T22:36:44.247029677Z   originalPath: '*'
+2026-07-17T22:36:44.247031637Z }
+2026-07-17T22:36:44.247033437Z 
+2026-07-17T22:36:44.247035347Z Node.js v24.14.1
