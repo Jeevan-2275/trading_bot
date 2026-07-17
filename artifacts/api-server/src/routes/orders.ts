@@ -2,6 +2,8 @@ import { Router } from "express";
 import { spawn } from "child_process";
 import path from "path";
 import fs from "fs";
+import { fileURLToPath } from "url";
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 import { db } from "@workspace/db";
 import { ordersTable } from "@workspace/db";
 import { eq, desc } from "drizzle-orm";
@@ -14,8 +16,8 @@ import { logger } from "../lib/logger";
 
 const router = Router();
 
-// __dirname = …/artifacts/api-server/dist  →  ../../.. = workspace root
-const WORKSPACE_ROOT = path.resolve(__dirname, "../../..");
+// __dirname = …/artifacts/api-server/src/routes  →  ../../../.. = workspace root
+const WORKSPACE_ROOT = path.resolve(__dirname, "../../../..");
 const BOT_DIR = path.join(WORKSPACE_ROOT, "trading_bot");
 const LOG_FILE = path.join(BOT_DIR, "trading_bot.log");
 
