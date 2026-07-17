@@ -1,6 +1,8 @@
 import express, { type Express } from "express";
 import cors from "cors";
 import pinoHttp from "pino-http";
+import path from "path";
+import fs from "fs";
 import router from "./routes";
 import { logger } from "./lib/logger";
 
@@ -30,5 +32,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
+
+// In production, serve the built React frontend from the same server.
+// The frontend is built into artifacts/trading-dashboard/dist by the
+// Render build step and copied to dist/public alongside the API bundle.
+if (process.env.NODE_ENV === "production") {
+  const frontendDir = path.resolve(__dirname, "public");
+  if (fs.existsSync(frontendDir)) {
+    app.use(express.static(frontendDir));
+    // SPA fallback — serve index.html for any non-API route
+    app.get("*", (_req, res) => {
+      res.sendFile(path.join(frontendDir, "index.html"));
+    });
+  }
+}
 
 export default app;

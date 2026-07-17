@@ -19,11 +19,10 @@ const WORKSPACE_ROOT = path.resolve(__dirname, "../../..");
 const BOT_DIR = path.join(WORKSPACE_ROOT, "trading_bot");
 const LOG_FILE = path.join(BOT_DIR, "trading_bot.log");
 
-// Augment PATH so python3 / pip packages are resolvable inside spawn()
+// Augment PATH so python3 is resolvable inside spawn() on any platform
 const PYTHON_EXTRA_PATHS = [
-  path.join(WORKSPACE_ROOT, ".pythonlibs", "bin"),
-  "/nix/var/nix/profiles/default/bin",
-  "/usr/local/bin",
+  path.join(WORKSPACE_ROOT, ".pythonlibs", "bin"), // Replit
+  "/usr/local/bin",                                 // Render / Linux
   "/usr/bin",
   "/bin",
 ].join(":");
