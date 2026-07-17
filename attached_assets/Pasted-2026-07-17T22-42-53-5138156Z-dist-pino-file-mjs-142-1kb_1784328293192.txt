@@ -1,0 +1,58 @@
+2026-07-17T22:42:53.5138156Z   dist/pino-file.mjs                 142.1kb
+2026-07-17T22:42:53.51381875Z   dist/pino-pretty.mjs               114.4kb
+2026-07-17T22:42:53.51382216Z   dist/thread-stream-worker.mjs        7.3kb
+2026-07-17T22:42:53.51382517Z   dist/index.mjs.map                   3.7mb
+2026-07-17T22:42:53.51382814Z   dist/pino-worker.mjs.map           256.9kb
+2026-07-17T22:42:53.51383108Z   dist/pino-file.mjs.map             229.0kb
+2026-07-17T22:42:53.51383449Z   dist/pino-pretty.mjs.map           203.6kb
+2026-07-17T22:42:53.51383751Z   dist/thread-stream-worker.mjs.map   12.0kb
+2026-07-17T22:42:53.51384041Z 
+2026-07-17T22:42:53.51384423Z ⚡ Done in 425ms
+2026-07-17T22:42:53.532124608Z ==> Building React frontend...
+2026-07-17T22:42:54.214210339Z vite v7.3.6 building client environment for production...
+2026-07-17T22:42:54.273309858Z transforming...
+2026-07-17T22:42:54.654558836Z src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+2026-07-17T22:42:55.033710282Z src/components/ui/select.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+2026-07-17T22:42:55.667165332Z src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+2026-07-17T22:42:56.932176185Z ✓ 2148 modules transformed.
+2026-07-17T22:42:57.442199982Z rendering chunks...
+2026-07-17T22:42:57.450777955Z computing gzip size...
+2026-07-17T22:42:57.465981762Z dist/index.html                   1.44 kB │ gzip:   0.55 kB
+2026-07-17T22:42:57.466004443Z dist/assets/index-DVrd1kvJ.css   94.87 kB │ gzip:  15.78 kB
+2026-07-17T22:42:57.466029654Z dist/assets/index-CKisMpsk.js   516.11 kB │ gzip: 158.89 kB
+2026-07-17T22:42:57.466122376Z 
+2026-07-17T22:42:57.466131167Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-07-17T22:42:57.466135627Z - Using dynamic import() to code-split the application
+2026-07-17T22:42:57.466140237Z - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+2026-07-17T22:42:57.466144167Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+2026-07-17T22:42:57.466368493Z ✓ built in 3.23s
+2026-07-17T22:42:57.587832368Z ==> Copying frontend into public dir for Express to serve...
+2026-07-17T22:42:57.592473754Z ==> Pushing database schema...
+2026-07-17T22:42:57.974932698Z 
+2026-07-17T22:42:57.974959389Z > @workspace/db@0.0.0 push /opt/render/project/src/lib/db
+2026-07-17T22:42:57.974964859Z > drizzle-kit push --config ./drizzle.config.ts
+2026-07-17T22:42:57.974969069Z 
+2026-07-17T22:42:58.119267675Z Reading config file '/opt/render/project/src/lib/db/drizzle.config.ts'
+2026-07-17T22:42:58.677033448Z Using 'pg' driver for database querying
+2026-07-17T22:42:58.954059569Z [⣷] Pulling schema from database...
+2026-07-17T22:42:59.075670488Z [⣯] Pulling schema from database...
+2026-07-17T22:42:59.204489378Z [⣟] Pulling schema from database...
+2026-07-17T22:42:59.288721367Z [✓] Pulling schema from database...
+2026-07-17T22:42:59.293623601Z [i] No changes detected
+2026-07-17T22:42:59.332371181Z ==> Build complete!
+2026-07-17T22:43:36.080913685Z ==> Uploading build...
+2026-07-17T22:43:48.536660028Z ==> Uploaded in 5.8s. Compression took 6.7s
+2026-07-17T22:43:49.888254908Z ==> Build successful 🎉
+2026-07-17T22:44:02.165249014Z ==> Deploying...
+2026-07-17T22:44:02.236286791Z ==> Setting WEB_CONCURRENCY=1 by default, based on available CPUs in the instance
+2026-07-17T22:44:33.211598016Z ==> Running 'node artifacts/api-server/dist/index.mjs'
+2026-07-17T22:44:34.312419821Z {"level":30,"time":1784328274311,"pid":71,"hostname":"srv-d9d9eeqhil2s7392eta0-hibernate-87bcf4dc6-6bl9b","port":10000,"msg":"Server listening"}
+2026-07-17T22:44:34.407597993Z {"level":30,"time":1784328274407,"pid":71,"hostname":"srv-d9d9eeqhil2s7392eta0-hibernate-87bcf4dc6-6bl9b","req":{"id":1,"method":"HEAD","url":"/"},"res":{"statusCode":200},"responseTime":5,"msg":"request completed"}
+2026-07-17T22:44:43.043931165Z ==> Your service is live 🎉
+2026-07-17T22:44:43.137422495Z ==> 
+2026-07-17T22:44:43.139594672Z ==> ///////////////////////////////////////////////////////////
+2026-07-17T22:44:43.142432135Z ==> 
+2026-07-17T22:44:43.144478125Z ==> Available at your primary URL https://trading-bot-8sdz.onrender.com
+2026-07-17T22:44:43.146458602Z ==> 
+2026-07-17T22:44:43.148148083Z ==> ///////////////////////////////////////////////////////////
+2026-07-17T22:44:43.134778845Z {"level":30,"time":1784328283134,"pid":71,"hostname":"srv-d9d9eeqhil2s7392eta0-hibernate-87bcf4dc6-6bl9b","req":{"id":2,"method":"GET","url":"/"},"res":{"statusCode":200},"responseTime":3,"msg":"request completed"}
