@@ -1,0 +1,50 @@
+2026-07-18T00:16:16.664919712Z 
+2026-07-18T00:16:16.664922763Z ⚡ Done in 345ms
+2026-07-18T00:16:16.750649252Z ==> Building React frontend...
+2026-07-18T00:16:17.380945143Z vite v7.3.6 building client environment for production...
+2026-07-18T00:16:17.44169926Z transforming...
+2026-07-18T00:16:17.790532132Z src/components/ui/tooltip.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+2026-07-18T00:16:18.236809103Z src/components/ui/select.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+2026-07-18T00:16:19.282675292Z src/components/ui/label.tsx (2:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+2026-07-18T00:16:20.244803798Z ✓ 2149 modules transformed.
+2026-07-18T00:16:20.495276234Z rendering chunks...
+2026-07-18T00:16:20.503377978Z computing gzip size...
+2026-07-18T00:16:20.51934346Z dist/index.html                   1.44 kB │ gzip:   0.55 kB
+2026-07-18T00:16:20.519377012Z dist/assets/index-DMiQqoX-.css   95.28 kB │ gzip:  15.81 kB
+2026-07-18T00:16:20.519411675Z dist/assets/index-CU3wxO5j.js   519.53 kB │ gzip: 159.71 kB
+2026-07-18T00:16:20.519457858Z 
+2026-07-18T00:16:20.519463989Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-07-18T00:16:20.519466949Z - Using dynamic import() to code-split the application
+2026-07-18T00:16:20.519470009Z - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+2026-07-18T00:16:20.519472459Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+2026-07-18T00:16:20.519670784Z ✓ built in 3.12s
+2026-07-18T00:16:20.64747036Z ==> Copying frontend into public dir for Express to serve...
+2026-07-18T00:16:20.651913036Z ==> Pushing database schema...
+2026-07-18T00:16:21.048586607Z 
+2026-07-18T00:16:21.048612769Z > @workspace/db@0.0.0 push /opt/render/project/src/lib/db
+2026-07-18T00:16:21.04862117Z > drizzle-kit push --config ./drizzle.config.ts
+2026-07-18T00:16:21.04862519Z 
+2026-07-18T00:16:21.188796644Z Reading config file '/opt/render/project/src/lib/db/drizzle.config.ts'
+2026-07-18T00:16:21.614993542Z Using 'pg' driver for database querying
+2026-07-18T00:16:21.91620747Z [⣷] Pulling schema from database...
+2026-07-18T00:16:22.037406492Z [⣯] Pulling schema from database...
+2026-07-18T00:16:22.165273822Z [⣟] Pulling schema from database...
+2026-07-18T00:16:22.273446938Z [✓] Pulling schema from database...
+2026-07-18T00:16:22.278349178Z [i] No changes detected
+2026-07-18T00:16:22.320447397Z ==> Build complete!
+2026-07-18T00:16:25.393061288Z ==> Uploading build...
+2026-07-18T00:16:36.840687602Z ==> Uploaded in 5.9s. Compression took 5.5s
+2026-07-18T00:16:37.058182859Z ==> Build successful 🎉
+2026-07-18T00:16:39.167013964Z ==> Deploying...
+2026-07-18T00:16:39.237920369Z ==> Setting WEB_CONCURRENCY=1 by default, based on available CPUs in the instance
+2026-07-18T00:17:10.405985744Z ==> Running 'node artifacts/api-server/dist/index.mjs'
+2026-07-18T00:17:11.702686024Z {"level":30,"time":1784333831701,"pid":70,"hostname":"srv-d9d9eeqhil2s7392eta0-hibernate-9dd4fb4fb-5n5r6","port":10000,"msg":"Server listening"}
+2026-07-18T00:17:11.895378065Z {"level":30,"time":1784333831894,"pid":70,"hostname":"srv-d9d9eeqhil2s7392eta0-hibernate-9dd4fb4fb-5n5r6","req":{"id":1,"method":"HEAD","url":"/"},"res":{"statusCode":200},"responseTime":92,"msg":"request completed"}
+2026-07-18T00:17:20.048484507Z ==> Your service is live 🎉
+2026-07-18T00:17:20.137780579Z ==> 
+2026-07-18T00:17:20.140549286Z ==> ///////////////////////////////////////////////////////////
+2026-07-18T00:17:20.143109887Z ==> 
+2026-07-18T00:17:20.145787742Z ==> Available at your primary URL https://trading-bot-8sdz.onrender.com
+2026-07-18T00:17:20.148295282Z ==> 
+2026-07-18T00:17:20.150967376Z ==> ///////////////////////////////////////////////////////////
+2026-07-18T00:17:20.162962061Z {"level":30,"time":1784333840162,"pid":70,"hostname":"srv-d9d9eeqhil2s7392eta0-hibernate-9dd4fb4fb-5n5r6","req":{"id":2,"method":"GET","url":"/"},"res":{"statusCode":200},"responseTime":3,"msg":"request completed"}

@@ -57,7 +57,7 @@ export const useMarketPrices = (
 // ---------------------------------------------------------------------------
 
 export const getAccountBalance = (): Promise<AssetBalance[]> =>
-  customFetch<AssetBalance[]>("/api/account/balance");
+  customFetch<AssetBalance[]>("/api/market/balance");
 
 export const useAccountBalance = (
   options?: { query?: UseQueryOptions<AssetBalance[]> }
