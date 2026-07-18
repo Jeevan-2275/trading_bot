@@ -2,165 +2,148 @@ import { AppLayout } from "@/components/layout/app-layout";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription as FormDesc } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useGetCredentialsStatus, useSaveCredentials } from "@workspace/api-client-react";
+import { useGetCredentialsStatus, useSaveCredentials, getGetCredentialsStatusQueryKey } from "@workspace/api-client-react";
 import { useToast } from "@/hooks/use-toast";
-import { Settings as SettingsIcon, Shield, CheckCircle2, AlertTriangle, Key } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
-import { getGetCredentialsStatusQueryKey } from "@workspace/api-client-react";
 
 const credentialsSchema = z.object({
-  apiKey: z.string().min(10, "API Key is required"),
-  apiSecret: z.string().min(10, "API Secret is required"),
+  apiKey: z.string().min(10, "API Key must be at least 10 characters"),
+  apiSecret: z.string().min(10, "API Secret must be at least 10 characters"),
 });
+type FormValues = z.infer<typeof credentialsSchema>;
 
-type CredentialsFormValues = z.infer<typeof credentialsSchema>;
+const inputCls = "w-full h-9 px-3 text-[13px] font-mono bg-[#111] border border-[#1a1a1a] rounded-md text-[#e4e4e7] outline-none focus:border-[#818cf8] transition-colors placeholder:text-[#3f3f46] tracking-wider";
 
 export default function Settings() {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const qc = useQueryClient();
   const { data: status, isLoading } = useGetCredentialsStatus();
   const saveCredentials = useSaveCredentials();
 
-  const form = useForm<CredentialsFormValues>({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(credentialsSchema),
-    defaultValues: {
-      apiKey: "",
-      apiSecret: "",
-    },
+    defaultValues: { apiKey: "", apiSecret: "" },
   });
 
-  const onSubmit = (data: CredentialsFormValues) => {
+  const onSubmit = (data: FormValues) => {
     saveCredentials.mutate({ data }, {
       onSuccess: () => {
-        toast({
-          title: "Credentials Saved",
-          description: "Your Binance API credentials have been securely stored.",
-        });
-        form.reset({ apiKey: "", apiSecret: "" });
-        queryClient.invalidateQueries({ queryKey: getGetCredentialsStatusQueryKey() });
+        toast({ title: "Credentials Saved", description: "Binance API credentials stored securely." });
+        reset({ apiKey: "", apiSecret: "" });
+        qc.invalidateQueries({ queryKey: getGetCredentialsStatusQueryKey() });
       },
-      onError: (error) => {
-        toast({
-          variant: "destructive",
-          title: "Failed to save",
-          description: "An error occurred while saving credentials.",
-        });
-      }
+      onError: () => {
+        toast({ variant: "destructive", title: "Save Failed", description: "An error occurred while saving credentials." });
+      },
     });
   };
 
+  const configured = status?.configured;
+
   return (
     <AppLayout>
-      <div className="p-8 max-w-3xl mx-auto space-y-8">
+      <div className="max-w-2xl mx-auto p-6 h-[calc(100vh-48px)] overflow-y-auto space-y-5">
         <div>
-          <h1 className="text-2xl font-bold font-mono tracking-tight mb-1 text-primary">SETTINGS</h1>
-          <p className="text-sm text-muted-foreground">Configure connection to Binance Futures API.</p>
+          <h1 className="text-lg font-bold text-[#f4f4f5] tracking-tight">Settings</h1>
+          <p className="text-[13px] text-[#52525b] mt-0.5">Configure Binance Futures Testnet connection</p>
         </div>
 
-        <div className="space-y-6">
-          <Card className="bg-card border-border shadow-none rounded-none">
-            <CardHeader className="border-b border-border bg-card/50">
-              <CardTitle className="text-sm font-mono flex items-center gap-2">
-                <Shield size={16} className="text-primary" />
-                CONNECTION_STATUS
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              {isLoading ? (
-                <Skeleton className="h-16 w-full rounded-none" />
-              ) : status?.configured ? (
-                <Alert className="rounded-none border-green-500/30 bg-green-500/10">
-                  <CheckCircle2 className="h-4 w-4 text-green-500" />
-                  <AlertTitle className="font-mono text-xs text-green-500">API CONFIGURED</AlertTitle>
-                  <AlertDescription className="font-mono text-xs text-green-500/80">
-                    Bot is connected and ready to trade. 
-                    (Keys present: {status.hasApiKey ? 'Yes' : 'No'} / Secret present: {status.hasApiSecret ? 'Yes' : 'No'})
-                  </AlertDescription>
-                </Alert>
-              ) : (
-                <Alert variant="destructive" className="rounded-none border-red-500/30 bg-red-500/10">
-                  <AlertTriangle className="h-4 w-4 text-red-500" />
-                  <AlertTitle className="font-mono text-xs text-red-500">NOT CONFIGURED</AlertTitle>
-                  <AlertDescription className="font-mono text-xs text-red-500/80">
-                    Binance API credentials are missing. Trading and testnet endpoints will fail.
-                  </AlertDescription>
-                </Alert>
-              )}
-            </CardContent>
-          </Card>
+        {/* Connection status */}
+        <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg overflow-hidden">
+          <div className="px-5 py-4 border-b border-[#1a1a1a]">
+            <h2 className="text-[13px] font-semibold text-[#a1a1aa] tracking-wide">Connection Status</h2>
+          </div>
+          <div className="p-5">
+            {isLoading ? (
+              <Skeleton className="h-16 w-full rounded-md bg-[#111]" />
+            ) : configured ? (
+              <div className="flex items-start gap-3 p-4 bg-[rgba(52,211,153,.06)] border border-[rgba(52,211,153,.2)] rounded-md">
+                <span className="text-[#34d399] text-lg leading-none mt-0.5">✓</span>
+                <div>
+                  <div className="text-[13px] font-semibold text-[#34d399]">API Configured</div>
+                  <div className="text-[12px] text-[#34d399]/70 mt-1 font-mono">
+                    Key: {status.hasApiKey ? "present" : "missing"} · Secret: {status.hasApiSecret ? "present" : "missing"}
+                  </div>
+                  <div className="text-[11px] text-[#52525b] mt-2">Bot is connected and ready to trade on Binance Futures Testnet.</div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-start gap-3 p-4 bg-[rgba(248,113,113,.06)] border border-[rgba(248,113,113,.2)] rounded-md">
+                <span className="text-[#f87171] text-lg leading-none mt-0.5">✗</span>
+                <div>
+                  <div className="text-[13px] font-semibold text-[#f87171]">Not Configured</div>
+                  <div className="text-[11px] text-[#52525b] mt-2">Binance API credentials are missing. Add them below to enable trading.</div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
 
-          <Card className="bg-card border-border shadow-none rounded-none">
-            <CardHeader className="border-b border-border bg-card/50">
-              <CardTitle className="text-sm font-mono flex items-center gap-2">
-                <Key size={16} className="text-primary" />
-                API_CREDENTIALS
-              </CardTitle>
-              <CardDescription className="font-mono text-xs mt-2">
-                Update your Binance Futures Testnet API keys here. This will overwrite existing keys.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-6">
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  
-                  <FormField
-                    control={form.control}
-                    name="apiKey"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="font-mono text-xs">BINANCE API KEY</FormLabel>
-                        <FormControl>
-                          <Input 
-                            className="font-mono rounded-none border-border focus-visible:ring-primary font-bold tracking-wider text-primary/80" 
-                            placeholder="Enter API Key" 
-                            type="password"
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+        {/* API Credentials form */}
+        <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg overflow-hidden">
+          <div className="px-5 py-4 border-b border-[#1a1a1a]">
+            <h2 className="text-[13px] font-semibold text-[#a1a1aa] tracking-wide">API Credentials</h2>
+            <p className="text-[11px] text-[#52525b] mt-1">Keys are stored server-side and never exposed to the browser.</p>
+          </div>
+          <form onSubmit={handleSubmit(onSubmit)} className="p-5 space-y-4">
+            <div className="space-y-1.5">
+              <label className="block text-[10px] font-semibold tracking-widest text-[#71717a] uppercase">Binance API Key</label>
+              <input
+                {...register("apiKey")}
+                type="password"
+                placeholder="Enter your API key"
+                className={inputCls}
+              />
+              {errors.apiKey && <p className="text-[11px] text-[#f87171] font-mono">{errors.apiKey.message}</p>}
+            </div>
 
-                  <FormField
-                    control={form.control}
-                    name="apiSecret"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="font-mono text-xs">BINANCE API SECRET</FormLabel>
-                        <FormControl>
-                          <Input 
-                            className="font-mono rounded-none border-border focus-visible:ring-primary font-bold tracking-wider text-primary/80" 
-                            placeholder="Enter API Secret" 
-                            type="password"
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormDesc className="font-mono text-xs text-muted-foreground">
-                          Keys are stored securely in the server environment and never exposed to the frontend.
-                        </FormDesc>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+            <div className="space-y-1.5">
+              <label className="block text-[10px] font-semibold tracking-widest text-[#71717a] uppercase">Binance API Secret</label>
+              <input
+                {...register("apiSecret")}
+                type="password"
+                placeholder="Enter your API secret"
+                className={inputCls}
+              />
+              {errors.apiSecret && <p className="text-[11px] text-[#f87171] font-mono">{errors.apiSecret.message}</p>}
+            </div>
 
-                  <Button 
-                    type="submit" 
-                    disabled={saveCredentials.isPending}
-                    className="rounded-none font-mono tracking-wider font-bold bg-primary text-primary-foreground hover:bg-primary/90"
-                  >
-                    {saveCredentials.isPending ? "SAVING..." : "UPDATE CREDENTIALS"}
-                  </Button>
-                </form>
-              </Form>
-            </CardContent>
-          </Card>
+            {/* Warning */}
+            <div className="flex items-start gap-2 p-3 bg-[rgba(251,191,36,.06)] border border-[rgba(251,191,36,.2)] rounded-md">
+              <span className="text-[#fbbf24] text-sm leading-none mt-0.5">⚠</span>
+              <p className="text-[11px] text-[#71717a]">
+                Use Binance <strong className="text-[#fbbf24]">Testnet</strong> API keys only. Real-account keys will not work and may trigger unintended trades.
+              </p>
+            </div>
+
+            <button
+              type="submit"
+              disabled={saveCredentials.isPending}
+              className="h-9 px-5 bg-[#1e1b4b] border border-[#818cf8]/30 text-[#818cf8] text-[13px] font-semibold rounded-md
+                         hover:bg-[#2e2a6b] hover:border-[#818cf8]/60 transition-all cursor-pointer disabled:opacity-50 tracking-wide"
+            >
+              {saveCredentials.isPending ? "Saving…" : "Update Credentials"}
+            </button>
+          </form>
+        </div>
+
+        {/* About */}
+        <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg p-5 space-y-3">
+          <h2 className="text-[13px] font-semibold text-[#a1a1aa] tracking-wide">About</h2>
+          <div className="space-y-2">
+            {[
+              ["Application", "QuantTerm PRO"],
+              ["Network",     "Binance Futures Testnet"],
+              ["Version",     "v1.4.0"],
+              ["Runtime",     "Node.js · Express · React"],
+            ].map(([k, v]) => (
+              <div key={k} className="flex justify-between items-center py-2 border-b border-[#111] last:border-0">
+                <span className="text-[11px] font-semibold tracking-widest text-[#52525b] uppercase">{k}</span>
+                <span className="text-[12px] font-mono text-[#71717a]">{v}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </AppLayout>
