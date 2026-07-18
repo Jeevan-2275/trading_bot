@@ -1,0 +1,104 @@
+/* Bloomberg Terminal — ultra-dense data terminal aesthetic */
+.bb-root {
+  display: flex; flex-direction: column;
+  width: 100%; height: 100vh;
+  background: #0e0e0e; color: #c8c8c8;
+  font-family: "IBM Plex Mono", "Courier New", monospace;
+  font-size: 11px; line-height: 1.45;
+  overflow: hidden;
+}
+
+/* Top bar */
+.bb-topbar {
+  display: flex; align-items: center; gap: 20px;
+  padding: 0 16px; height: 32px;
+  background: #1a1a1a; border-bottom: 1px solid #2a2a2a;
+  flex-shrink: 0;
+}
+.bb-logo { color: #f0a500; font-size: 12px; font-weight: 700; letter-spacing: .08em; white-space: nowrap; }
+.bb-logo-sub { color: #888; font-weight: 400; }
+.bb-ticker { display: flex; gap: 24px; flex: 1; overflow: hidden; }
+.bb-tick { display: flex; gap: 8px; align-items: center; white-space: nowrap; }
+.bb-tick-sym { color: #888; font-size: 10px; }
+.bb-tick-price { color: #e0e0e0; font-size: 11px; font-weight: 600; }
+.bb-tick-chg { font-size: 10px; font-weight: 700; }
+.bb-time { color: #555; font-size: 10px; white-space: nowrap; }
+
+/* Body */
+.bb-body { display: flex; flex: 1; overflow: hidden; }
+
+/* Left panel */
+.bb-left {
+  width: 260px; flex-shrink: 0;
+  background: #111; border-right: 1px solid #222;
+  padding: 12px 14px; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.bb-section-label {
+  font-size: 9px; font-weight: 700; letter-spacing: .12em;
+  color: #f0a500; text-transform: uppercase; padding-bottom: 4px;
+}
+.bb-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.bb-metric { background: #1a1a1a; border: 1px solid #222; padding: 8px 10px; }
+.bb-metric-label { font-size: 9px; color: #666; letter-spacing: .08em; margin-bottom: 4px; }
+.bb-metric-val { font-size: 22px; font-weight: 700; color: #e0e0e0; line-height: 1; }
+.bb-divider { border: none; border-top: 1px solid #1e1e1e; margin: 4px 0; }
+.bb-kv { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px dotted #1e1e1e; font-size: 10px; }
+.bb-kv span:first-child { color: #666; }
+.bb-kv-val { color: #c8c8c8; font-variant-numeric: tabular-nums; }
+
+/* Mini bar chart */
+.bb-bars { display: flex; gap: 6px; align-items: flex-end; height: 60px; padding-top: 8px; }
+.bb-bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; }
+.bb-bar { background: #f0a500; width: 100%; transition: height .3s; opacity: .7; min-height: 4px; }
+.bb-bar-label { font-size: 8px; color: #555; }
+
+/* Log */
+.bb-log-entry { display: flex; gap: 6px; align-items: baseline; font-size: 9px; padding: 1px 0; }
+.bb-log-time { color: #555; white-space: nowrap; }
+.bb-log-lvl { font-weight: 700; padding: 0 3px; font-size: 8px; }
+.bb-log-lvl.info  { color: #00a8ff; }
+.bb-log-lvl.debug { color: #888; }
+.bb-log-lvl.warn  { color: #f0a500; }
+.bb-log-lvl.error { color: #ff4d4d; }
+
+/* Right: table */
+.bb-right { flex: 1; padding: 12px 16px; overflow-y: auto; display: flex; flex-direction: column; }
+.bb-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.bb-table thead tr { border-bottom: 1px solid #f0a500; }
+.bb-table th {
+  text-align: left; padding: 6px 10px 6px 4px;
+  font-size: 9px; font-weight: 700; letter-spacing: .08em;
+  color: #f0a500; white-space: nowrap;
+}
+.bb-table th.r, .bb-table td.r { text-align: right; }
+.bb-table td { padding: 6px 10px 6px 4px; border-bottom: 1px solid #1a1a1a; vertical-align: middle; }
+.bb-table tbody tr:hover { background: #161616; }
+.bb-table .mono { font-variant-numeric: tabular-nums; }
+.bb-table .dim { color: #666; }
+
+.bb-badge {
+  display: inline-block; font-size: 9px; font-weight: 700;
+  padding: 1px 5px; letter-spacing: .06em;
+}
+.bb-badge.buy  { color: #00c076; border: 1px solid #00c07644; }
+.bb-badge.sell { color: #ff4d4d; border: 1px solid #ff4d4d44; }
+.bb-status { font-size: 10px; font-weight: 700; letter-spacing: .04em; }
+.bb-table-footer { margin-top: 12px; font-size: 9px; color: #444; }
+
+/* Status bar */
+.bb-statusbar {
+  display: flex; align-items: center; gap: 0;
+  padding: 0 16px; height: 22px; flex-shrink: 0;
+  background: #141414; border-top: 1px solid #222; font-size: 9px; color: #555;
+}
+.bb-status-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #00c076; margin-right: 6px; flex-shrink: 0;
+}
+.bb-status-sep { margin: 0 12px; color: #2a2a2a; }
+
+/* Colors */
+.up  { color: #00c076 !important; }
+.dn  { color: #ff4d4d !important; }
+.mid { color: #f0a500 !important; }
