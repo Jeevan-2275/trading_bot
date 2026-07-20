@@ -29,11 +29,20 @@ const QTY: Record<string, () => string> = {
 
 seedRouter.get("/seed", async (req, res) => {
   try {
-    // Idempotency check
+    const force = req.query.force === "true";
+
+    // Idempotency check (skip if data exists, unless force=true)
     const [{ value: existingCount }] = await db.select({ value: count() }).from(ordersTable);
-    if (existingCount > 0) {
-      res.json({ ok: true, message: `Database already has ${existingCount} orders — skipping seed.` });
+    if (existingCount > 0 && !force) {
+      res.json({ ok: true, message: `Database already has ${existingCount} orders — skipping seed. Use ?force=true to reseed.` });
       return;
+    }
+
+    // Clear existing data when forcing
+    if (force && existingCount > 0) {
+      await db.delete(ordersTable);
+      await db.delete(journalTable);
+      await db.delete(alertsTable);
     }
 
     const symbols = Object.keys(BASE);
