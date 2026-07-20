@@ -9,6 +9,7 @@ import { analyticsRouter } from "./analytics";
 import { alertsRouter } from "./alerts";
 import { journalRouter } from "./journal";
 import { strategiesRouter } from "./strategies";
+import seedRouter from "./seed";
 
 const router: IRouter = Router();
 
@@ -22,5 +23,6 @@ router.use("/analytics", analyticsRouter);
 router.use("/alerts", alertsRouter);
 router.use("/journal", journalRouter);
 router.use("/strategies", strategiesRouter);
+router.use(seedRouter);
 
 export default router;
