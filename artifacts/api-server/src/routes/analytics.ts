@@ -72,7 +72,7 @@ router.get("/", async (_req, res) => {
     sharpeRatio = std === 0 ? 0 : (mean / std) * Math.sqrt(365);
   }
 
-  // Max drawdown
+  // Max drawdown (capped at 100%)
   let maxDrawdown = 0;
   let peak = 0;
   let cumPnl = 0;
@@ -80,7 +80,7 @@ router.get("/", async (_req, res) => {
     cumPnl += dayMap[d];
     if (cumPnl > peak) peak = cumPnl;
     if (peak > 0) {
-      const dd = ((peak - cumPnl) / peak) * 100;
+      const dd = Math.min(((peak - cumPnl) / peak) * 100, 100);
       if (dd > maxDrawdown) maxDrawdown = dd;
     }
   }

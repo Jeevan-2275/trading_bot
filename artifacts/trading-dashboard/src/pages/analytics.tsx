@@ -106,21 +106,21 @@ export default function Analytics() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
         {/* Win Rate gauge */}
-        <motion.div variants={item} className="glass p-6 flex items-center justify-between gap-4 md:col-span-1 relative overflow-hidden">
+        <motion.div variants={item} className="glass p-5 flex flex-col items-center justify-center gap-3 md:col-span-1 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.05] to-transparent pointer-events-none"/>
+          <div className="text-[10px] tracking-widest text-white/40 uppercase font-mono self-start">Win Rate</div>
           <WinRateGauge rate={wr} />
-          <div className="flex-1 min-w-0">
-            <div className="text-[10px] tracking-widest text-white/40 uppercase font-mono mb-1">Win Rate</div>
-            <div className="text-xs text-white/40 font-mono">{total} total</div>
-            <div className="mt-3 space-y-1.5">
-              <div className="flex justify-between text-[11px] font-mono">
-                <span className="text-emerald-400">Wins</span>
-                <span className="tabular text-white/70">{analytics?.filledTrades ? Math.round(wr / 100 * analytics.filledTrades) : 0}</span>
-              </div>
-              <div className="flex justify-between text-[11px] font-mono">
-                <span className="text-red-400">Losses</span>
-                <span className="tabular text-white/70">{analytics?.filledTrades ? Math.round((1 - wr/100) * analytics.filledTrades) : 0}</span>
-              </div>
+          <div className="w-full space-y-1.5">
+            <div className="flex justify-between text-[11px] font-mono">
+              <span className="text-white/40">{total} total trades</span>
+            </div>
+            <div className="flex justify-between text-[11px] font-mono">
+              <span className="text-emerald-400">Wins</span>
+              <span className="tabular text-white/70">{analytics?.filledTrades ? Math.round(wr / 100 * analytics.filledTrades) : 0}</span>
+            </div>
+            <div className="flex justify-between text-[11px] font-mono">
+              <span className="text-red-400">Losses</span>
+              <span className="tabular text-white/70">{analytics?.filledTrades ? Math.round((1 - wr/100) * analytics.filledTrades) : 0}</span>
             </div>
           </div>
         </motion.div>
