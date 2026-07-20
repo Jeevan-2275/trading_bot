@@ -27,7 +27,7 @@ const QTY: Record<string, () => string> = {
   AVAXUSDT: () => fmt(randBetween(2, 30), 4),
 };
 
-seedRouter.get("/api/seed", async (req, res) => {
+seedRouter.get("/seed", async (req, res) => {
   try {
     // Idempotency check
     const [{ value: existingCount }] = await db.select({ value: count() }).from(ordersTable);
