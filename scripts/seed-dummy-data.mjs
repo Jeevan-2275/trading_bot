@@ -17,6 +17,15 @@ if (!DATABASE_URL) {
 const client = new Client({ connectionString: DATABASE_URL });
 await client.connect();
 
+// ─── idempotency check ────────────────────────────────────────────────────────
+const existing = await client.query("SELECT COUNT(*) FROM orders");
+const count = parseInt(existing.rows[0].count, 10);
+if (count > 0) {
+  console.log(`ℹ️  Database already has ${count} orders — skipping seed.`);
+  await client.end();
+  process.exit(0);
+}
+
 // ─── helpers ──────────────────────────────────────────────────────────────────
 const randBetween = (lo, hi) => lo + Math.random() * (hi - lo);
 const randInt = (lo, hi) => Math.floor(randBetween(lo, hi + 1));

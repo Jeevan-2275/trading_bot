@@ -26,4 +26,7 @@ cp -r artifacts/trading-dashboard/dist/. artifacts/api-server/dist/public/
 echo "==> Pushing database schema..."
 pnpm --filter @workspace/db run push || echo "WARNING: DB push failed, the schema may already be up to date"
 
+echo "==> Seeding dummy data (skipped automatically if data already exists)..."
+node scripts/seed-dummy-data.mjs || echo "WARNING: Seed failed, continuing"
+
 echo "==> Build complete!"
