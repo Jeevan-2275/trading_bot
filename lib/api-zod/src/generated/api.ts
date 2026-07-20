@@ -9,7 +9,6 @@ import * as zod from 'zod';
 
 
 /**
- * Returns server health status
  * @summary Health check
  */
 export const HealthCheckResponse = zod.object({
@@ -21,7 +20,10 @@ export const HealthCheckResponse = zod.object({
  * @summary List all placed orders
  */
 export const ListOrdersQueryParams = zod.object({
-  "limit": zod.coerce.number().optional()
+  "limit": zod.coerce.number().optional(),
+  "symbol": zod.coerce.string().optional(),
+  "side": zod.coerce.string().optional(),
+  "status": zod.coerce.string().optional()
 })
 
 export const ListOrdersResponseItem = zod.object({
@@ -47,13 +49,13 @@ export const ListOrdersResponse = zod.array(ListOrdersResponseItem)
  * @summary Place a new trading order
  */
 export const PlaceOrderBody = zod.object({
-  "symbol": zod.string().describe('Trading pair symbol (e.g. BTCUSDT)'),
+  "symbol": zod.string(),
   "side": zod.enum(['BUY', 'SELL']),
   "orderType": zod.enum(['MARKET', 'LIMIT', 'STOP_MARKET']),
   "quantity": zod.number(),
-  "price": zod.number().nullish().describe('Required for LIMIT orders'),
-  "stopPrice": zod.number().nullish().describe('Required for STOP_MARKET orders'),
-  "testMode": zod.boolean().optional().describe('If true, uses Binance test endpoint (no real trade)')
+  "price": zod.number().nullish(),
+  "stopPrice": zod.number().nullish(),
+  "testMode": zod.boolean().optional()
 })
 
 export const PlaceOrderResponse = zod.object({
@@ -137,7 +139,7 @@ export const GetCredentialsStatusResponse = zod.object({
 
 
 /**
- * @summary Save Binance API credentials (stored in server env only)
+ * @summary Save Binance API credentials
  */
 export const SaveCredentialsBody = zod.object({
   "apiKey": zod.string(),
@@ -164,5 +166,236 @@ export const GetStatsResponse = zod.object({
   "byType": zod.record(zod.string(), zod.number()),
   "bySide": zod.record(zod.string(), zod.number())
 })
+
+
+/**
+ * @summary Live 24hr ticker for major pairs
+ */
+export const MarketPricesResponseItem = zod.object({
+  "symbol": zod.string(),
+  "price": zod.number(),
+  "change": zod.number(),
+  "changePercent": zod.number(),
+  "high": zod.number(),
+  "low": zod.number(),
+  "volume": zod.number()
+})
+export const MarketPricesResponse = zod.array(MarketPricesResponseItem)
+
+
+/**
+ * @summary Fetch account balance (requires credentials)
+ */
+export const AccountBalanceResponseItem = zod.object({
+  "asset": zod.string(),
+  "balance": zod.number(),
+  "available": zod.number(),
+  "unrealizedPnl": zod.number().optional()
+})
+export const AccountBalanceResponse = zod.array(AccountBalanceResponseItem)
+
+
+/**
+ * @summary OHLCV candlestick data for a symbol
+ */
+export const getKlinesQueryIntervalDefault = `1h`;
+export const getKlinesQueryLimitDefault = 100;
+
+export const GetKlinesQueryParams = zod.object({
+  "symbol": zod.coerce.string(),
+  "interval": zod.enum(['1m', '5m', '15m', '30m', '1h', '4h', '1d']).default(getKlinesQueryIntervalDefault),
+  "limit": zod.coerce.number().default(getKlinesQueryLimitDefault)
+})
+
+export const GetKlinesResponseItem = zod.object({
+  "openTime": zod.number(),
+  "open": zod.number(),
+  "high": zod.number(),
+  "low": zod.number(),
+  "close": zod.number(),
+  "volume": zod.number(),
+  "closeTime": zod.number()
+})
+export const GetKlinesResponse = zod.array(GetKlinesResponseItem)
+
+
+/**
+ * @summary Advanced performance analytics
+ */
+export const GetAnalyticsResponse = zod.object({
+  "winRate": zod.number().describe('Win rate as percentage (0-100)'),
+  "lossRate": zod.number(),
+  "totalTrades": zod.number(),
+  "filledTrades": zod.number(),
+  "totalPnl": zod.number(),
+  "avgTrade": zod.number(),
+  "bestTrade": zod.number(),
+  "worstTrade": zod.number(),
+  "sharpeRatio": zod.number(),
+  "maxDrawdown": zod.number().describe('Max drawdown as percentage'),
+  "profitFactor": zod.number(),
+  "avgHoldingHours": zod.number()
+})
+
+
+/**
+ * @summary Daily P&L for calendar heatmap
+ */
+export const getDailyPnlQueryDaysDefault = 90;
+
+export const GetDailyPnlQueryParams = zod.object({
+  "days": zod.coerce.number().default(getDailyPnlQueryDaysDefault)
+})
+
+export const GetDailyPnlResponseItem = zod.object({
+  "date": zod.string().describe('ISO date string YYYY-MM-DD'),
+  "pnl": zod.number(),
+  "trades": zod.number()
+})
+export const GetDailyPnlResponse = zod.array(GetDailyPnlResponseItem)
+
+
+/**
+ * @summary List all price alerts
+ */
+export const ListAlertsResponseItem = zod.object({
+  "id": zod.number(),
+  "symbol": zod.string(),
+  "targetPrice": zod.number(),
+  "direction": zod.enum(['ABOVE', 'BELOW']),
+  "message": zod.string().nullish(),
+  "triggered": zod.boolean(),
+  "createdAt": zod.string()
+})
+export const ListAlertsResponse = zod.array(ListAlertsResponseItem)
+
+
+/**
+ * @summary Create a price alert
+ */
+export const CreateAlertBody = zod.object({
+  "symbol": zod.string(),
+  "targetPrice": zod.number(),
+  "direction": zod.enum(['ABOVE', 'BELOW']),
+  "message": zod.string().optional()
+})
+
+export const CreateAlertResponse = zod.object({
+  "id": zod.number(),
+  "symbol": zod.string(),
+  "targetPrice": zod.number(),
+  "direction": zod.enum(['ABOVE', 'BELOW']),
+  "message": zod.string().nullish(),
+  "triggered": zod.boolean(),
+  "createdAt": zod.string()
+})
+
+
+/**
+ * @summary Delete a price alert
+ */
+export const DeleteAlertParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const DeleteAlertResponse = zod.object({
+  "success": zod.boolean().optional()
+})
+
+
+/**
+ * @summary List trade journal entries
+ */
+export const ListJournalEntriesResponseItem = zod.object({
+  "id": zod.number(),
+  "orderId": zod.number().nullish(),
+  "title": zod.string(),
+  "notes": zod.string().nullish(),
+  "tags": zod.string().nullish(),
+  "sentiment": zod.union([zod.literal('bullish'),zod.literal('bearish'),zod.literal('neutral'),zod.literal(null)]).nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+export const ListJournalEntriesResponse = zod.array(ListJournalEntriesResponseItem)
+
+
+/**
+ * @summary Create a journal entry
+ */
+export const CreateJournalEntryBody = zod.object({
+  "orderId": zod.number().nullish(),
+  "title": zod.string(),
+  "notes": zod.string().optional(),
+  "tags": zod.string().optional(),
+  "sentiment": zod.enum(['bullish', 'bearish', 'neutral']).optional()
+})
+
+export const CreateJournalEntryResponse = zod.object({
+  "id": zod.number(),
+  "orderId": zod.number().nullish(),
+  "title": zod.string(),
+  "notes": zod.string().nullish(),
+  "tags": zod.string().nullish(),
+  "sentiment": zod.union([zod.literal('bullish'),zod.literal('bearish'),zod.literal('neutral'),zod.literal(null)]).nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+
+
+/**
+ * @summary Update a journal entry
+ */
+export const UpdateJournalEntryParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const UpdateJournalEntryBody = zod.object({
+  "orderId": zod.number().nullish(),
+  "title": zod.string(),
+  "notes": zod.string().optional(),
+  "tags": zod.string().optional(),
+  "sentiment": zod.enum(['bullish', 'bearish', 'neutral']).optional()
+})
+
+export const UpdateJournalEntryResponse = zod.object({
+  "id": zod.number(),
+  "orderId": zod.number().nullish(),
+  "title": zod.string(),
+  "notes": zod.string().nullish(),
+  "tags": zod.string().nullish(),
+  "sentiment": zod.union([zod.literal('bullish'),zod.literal('bearish'),zod.literal('neutral'),zod.literal(null)]).nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+
+
+/**
+ * @summary Delete a journal entry
+ */
+export const DeleteJournalEntryParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const DeleteJournalEntryResponse = zod.object({
+  "success": zod.boolean().optional()
+})
+
+
+/**
+ * @summary Get real-time strategy signals for major pairs
+ */
+export const GetStrategySignalsResponseItem = zod.object({
+  "symbol": zod.string(),
+  "signal": zod.enum(['BUY', 'SELL', 'NEUTRAL']),
+  "strategy": zod.string(),
+  "strength": zod.number().describe('Signal strength 0-100'),
+  "reason": zod.string(),
+  "price": zod.number(),
+  "rsi": zod.number().optional(),
+  "sma20": zod.number().optional(),
+  "sma50": zod.number().optional(),
+  "timestamp": zod.string()
+})
+export const GetStrategySignalsResponse = zod.array(GetStrategySignalsResponseItem)
 
 

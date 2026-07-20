@@ -9,6 +9,159 @@ export interface HealthStatus {
   status: string;
 }
 
+export interface TickerData {
+  symbol: string;
+  price: number;
+  change: number;
+  changePercent: number;
+  high: number;
+  low: number;
+  volume: number;
+}
+
+export interface AssetBalance {
+  asset: string;
+  balance: number;
+  available: number;
+  unrealizedPnl?: number;
+}
+
+export interface Kline {
+  openTime: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+  closeTime: number;
+}
+
+export interface AdvancedAnalytics {
+  /** Win rate as percentage (0-100) */
+  winRate: number;
+  lossRate: number;
+  totalTrades: number;
+  filledTrades: number;
+  totalPnl: number;
+  avgTrade: number;
+  bestTrade: number;
+  worstTrade: number;
+  sharpeRatio: number;
+  /** Max drawdown as percentage */
+  maxDrawdown: number;
+  profitFactor: number;
+  avgHoldingHours: number;
+}
+
+export interface DailyPnl {
+  /** ISO date string YYYY-MM-DD */
+  date: string;
+  pnl: number;
+  trades: number;
+}
+
+export type AlertDirection = typeof AlertDirection[keyof typeof AlertDirection];
+
+
+export const AlertDirection = {
+  ABOVE: 'ABOVE',
+  BELOW: 'BELOW',
+} as const;
+
+export interface Alert {
+  id: number;
+  symbol: string;
+  targetPrice: number;
+  direction: AlertDirection;
+  /** @nullable */
+  message?: string | null;
+  triggered: boolean;
+  createdAt: string;
+}
+
+export type AlertInputDirection = typeof AlertInputDirection[keyof typeof AlertInputDirection];
+
+
+export const AlertInputDirection = {
+  ABOVE: 'ABOVE',
+  BELOW: 'BELOW',
+} as const;
+
+export interface AlertInput {
+  symbol: string;
+  targetPrice: number;
+  direction: AlertInputDirection;
+  message?: string;
+}
+
+/**
+ * @nullable
+ */
+export type JournalEntrySentiment = typeof JournalEntrySentiment[keyof typeof JournalEntrySentiment] | null;
+
+
+export const JournalEntrySentiment = {
+  bullish: 'bullish',
+  bearish: 'bearish',
+  neutral: 'neutral',
+} as const;
+
+export interface JournalEntry {
+  id: number;
+  /** @nullable */
+  orderId?: number | null;
+  title: string;
+  /** @nullable */
+  notes?: string | null;
+  /** @nullable */
+  tags?: string | null;
+  /** @nullable */
+  sentiment?: JournalEntrySentiment;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type JournalInputSentiment = typeof JournalInputSentiment[keyof typeof JournalInputSentiment];
+
+
+export const JournalInputSentiment = {
+  bullish: 'bullish',
+  bearish: 'bearish',
+  neutral: 'neutral',
+} as const;
+
+export interface JournalInput {
+  /** @nullable */
+  orderId?: number | null;
+  title: string;
+  notes?: string;
+  tags?: string;
+  sentiment?: JournalInputSentiment;
+}
+
+export type StrategySignalSignal = typeof StrategySignalSignal[keyof typeof StrategySignalSignal];
+
+
+export const StrategySignalSignal = {
+  BUY: 'BUY',
+  SELL: 'SELL',
+  NEUTRAL: 'NEUTRAL',
+} as const;
+
+export interface StrategySignal {
+  symbol: string;
+  signal: StrategySignalSignal;
+  strategy: string;
+  /** Signal strength 0-100 */
+  strength: number;
+  reason: string;
+  price: number;
+  rsi?: number;
+  sma20?: number;
+  sma50?: number;
+  timestamp: string;
+}
+
 export type OrderInputSide = typeof OrderInputSide[keyof typeof OrderInputSide];
 
 
@@ -27,22 +180,14 @@ export const OrderInputOrderType = {
 } as const;
 
 export interface OrderInput {
-  /** Trading pair symbol (e.g. BTCUSDT) */
   symbol: string;
   side: OrderInputSide;
   orderType: OrderInputOrderType;
   quantity: number;
-  /**
-     * Required for LIMIT orders
-     * @nullable
-     */
+  /** @nullable */
   price?: number | null;
-  /**
-     * Required for STOP_MARKET orders
-     * @nullable
-     */
+  /** @nullable */
   stopPrice?: number | null;
-  /** If true, uses Binance test endpoint (no real trade) */
   testMode?: boolean;
 }
 
@@ -125,10 +270,44 @@ export interface ErrorResponse {
 
 export type ListOrdersParams = {
 limit?: number;
+symbol?: string;
+side?: string;
+status?: string;
 };
 
 export type GetLogsParams = {
 limit?: number;
 level?: string;
+};
+
+export type GetKlinesParams = {
+symbol: string;
+interval?: GetKlinesInterval;
+limit?: number;
+};
+
+export type GetKlinesInterval = typeof GetKlinesInterval[keyof typeof GetKlinesInterval];
+
+
+export const GetKlinesInterval = {
+  '1m': '1m',
+  '5m': '5m',
+  '15m': '15m',
+  '30m': '30m',
+  '1h': '1h',
+  '4h': '4h',
+  '1d': '1d',
+} as const;
+
+export type GetDailyPnlParams = {
+days?: number;
+};
+
+export type DeleteAlert200 = {
+  success?: boolean;
+};
+
+export type DeleteJournalEntry200 = {
+  success?: boolean;
 };
 

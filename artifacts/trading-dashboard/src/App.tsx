@@ -4,10 +4,16 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
 import { Route, Switch, Router as WouterRouter } from 'wouter';
 import { Component, type ReactNode, type ErrorInfo } from 'react';
+import { AppLayout } from '@/components/layout/app-layout';
 
 import Dashboard from '@/pages/dashboard';
+import Analytics from '@/pages/analytics';
+import Portfolio from '@/pages/portfolio';
+import Strategies from '@/pages/strategies';
 import PlaceOrder from '@/pages/place-order';
 import Orders from '@/pages/orders';
+import Alerts from '@/pages/alerts';
+import Journal from '@/pages/journal';
 import Logs from '@/pages/logs';
 import Settings from '@/pages/settings';
 
@@ -33,17 +39,17 @@ class ErrorBoundary extends Component<
       const err = this.state.error as Error;
       return (
         <div className="min-h-screen bg-background flex items-center justify-center p-8">
-          <div className="max-w-xl w-full border border-red-800 bg-red-950/20 p-6 font-mono text-sm space-y-4">
-            <p className="text-red-400 font-bold">APP_CRASH</p>
+          <div className="max-w-xl w-full border border-red-800 bg-red-950/20 p-6 font-mono text-sm space-y-4 rounded-xl">
+            <p className="text-red-400 font-bold">SYSTEM_FAILURE</p>
             <p className="text-muted-foreground">{err.message}</p>
-            <pre className="text-xs text-muted-foreground/60 whitespace-pre-wrap overflow-auto max-h-48">
+            <pre className="text-xs text-muted-foreground/60 whitespace-pre-wrap overflow-auto max-h-48 p-4 bg-black/50 rounded border border-white/5">
               {err.stack}
             </pre>
             <button
               onClick={() => this.setState({ error: null })}
-              className="px-4 py-2 border border-border text-xs hover:bg-muted/30"
+              className="px-4 py-2 border border-border text-xs hover:bg-white/5 rounded transition-colors text-white"
             >
-              RETRY
+              REBOOT_SYSTEM
             </button>
           </div>
         </div>
@@ -55,14 +61,21 @@ class ErrorBoundary extends Component<
 
 function Router() {
   return (
-    <Switch>
-      <Route path="/" component={Dashboard} />
-      <Route path="/place-order" component={PlaceOrder} />
-      <Route path="/orders" component={Orders} />
-      <Route path="/logs" component={Logs} />
-      <Route path="/settings" component={Settings} />
-      <Route component={NotFound} />
-    </Switch>
+    <AppLayout>
+      <Switch>
+        <Route path="/" component={Dashboard} />
+        <Route path="/analytics" component={Analytics} />
+        <Route path="/portfolio" component={Portfolio} />
+        <Route path="/strategies" component={Strategies} />
+        <Route path="/place-order" component={PlaceOrder} />
+        <Route path="/orders" component={Orders} />
+        <Route path="/alerts" component={Alerts} />
+        <Route path="/journal" component={Journal} />
+        <Route path="/logs" component={Logs} />
+        <Route path="/settings" component={Settings} />
+        <Route component={NotFound} />
+      </Switch>
+    </AppLayout>
   );
 }
 

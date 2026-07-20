@@ -6,9 +6,9 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type ListOrdersParams = {
-limit?: number;
-symbol?: string;
-side?: string;
-status?: string;
-};
+export interface AssetBalance {
+  asset: string;
+  balance: number;
+  available: number;
+  unrealizedPnl?: number;
+}

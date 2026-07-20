@@ -5,10 +5,10 @@
  * Trading Bot API
  * OpenAPI spec version: 0.1.0
  */
+import type { GetKlinesInterval } from './getKlinesInterval';
 
-export type ListOrdersParams = {
+export type GetKlinesParams = {
+symbol: string;
+interval?: GetKlinesInterval;
 limit?: number;
-symbol?: string;
-side?: string;
-status?: string;
 };

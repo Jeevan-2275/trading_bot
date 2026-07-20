@@ -6,9 +6,9 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type ListOrdersParams = {
-limit?: number;
-symbol?: string;
-side?: string;
-status?: string;
-};
+export interface DailyPnl {
+  /** ISO date string YYYY-MM-DD */
+  date: string;
+  pnl: number;
+  trades: number;
+}

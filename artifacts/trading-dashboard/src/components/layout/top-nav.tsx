@@ -1,61 +1,53 @@
-import { Link, useLocation } from "wouter";
-import { useHealthCheck } from "@workspace/api-client-react";
-
-const NAV = [
-  { label: "Dashboard",   href: "/" },
-  { label: "Place Order", href: "/place-order" },
-  { label: "Orders",      href: "/orders" },
-  { label: "Logs",        href: "/logs" },
-  { label: "Settings",    href: "/settings" },
-];
+import { useLocation } from "wouter";
+import { useState, useEffect } from "react";
+import { Search, Bell } from "lucide-react";
 
 export function TopNav() {
   const [location] = useLocation();
-  const { data: health } = useHealthCheck({ query: { refetchInterval: 10000 } });
-  const isOnline = health?.status === "ok";
+
+  const getPageTitle = (path: string) => {
+    switch (path) {
+      case "/": return "Command Center";
+      case "/analytics": return "Performance Analytics";
+      case "/portfolio": return "Asset Portfolio";
+      case "/strategies": return "Strategy Signals";
+      case "/place-order": return "Execution Terminal";
+      case "/orders": return "Order Ledger";
+      case "/alerts": return "Price Alerts";
+      case "/journal": return "Trade Journal";
+      case "/logs": return "System Logs";
+      case "/settings": return "Configuration";
+      default: return "Dashboard";
+    }
+  };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex items-center h-12 px-6 bg-[#0a0a0a] border-b border-[#1a1a1a]">
-      {/* Logo */}
-      <div className="flex items-center gap-2 mr-9 shrink-0">
-        <span className="text-[#818cf8] text-lg leading-none">◈</span>
-        <span className="font-bold text-sm text-[#f4f4f5] tracking-tight">QuantTerm</span>
-        <span className="text-[9px] font-bold tracking-widest px-1.5 py-0.5 rounded bg-[#1e1b4b] text-[#818cf8]">PRO</span>
+    <header className="fixed top-0 left-64 right-0 z-30 flex items-center justify-between h-14 px-6 glass-panel border-b border-white/5">
+      <div className="flex items-center gap-4">
+        <h1 className="text-lg font-semibold tracking-tight text-white/90">
+          {getPageTitle(location)}
+        </h1>
       </div>
 
-      {/* Nav links */}
-      <nav className="flex h-full">
-        {NAV.map(({ label, href }) => {
-          const active = location === href;
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={`
-                flex items-center h-full px-4 text-[13px] font-medium border-b-2 transition-all duration-150
-                ${active
-                  ? "text-[#e4e4e7] border-[#818cf8]"
-                  : "text-[#52525b] border-transparent hover:text-[#a1a1aa]"}
-              `}
-            >
-              {label}
-            </Link>
-          );
-        })}
-      </nav>
+      <div className="flex items-center gap-6">
+        {/* Global Search Mock */}
+        <div className="relative group">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 group-focus-within:text-primary transition-colors" />
+          <input 
+            type="text" 
+            placeholder="Search commands (⌘K)" 
+            className="h-8 w-64 bg-white/5 border border-white/10 rounded-full pl-9 pr-4 text-xs text-white/80 placeholder:text-white/30 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 focus:bg-white/10 transition-all font-mono"
+          />
+        </div>
 
-      {/* Right side */}
-      <div className="flex items-center gap-4 ml-auto">
-        <span
-          className={`text-[10px] font-semibold tracking-widest px-2 py-1 rounded-full border ${
-            isOnline
-              ? "bg-[#052e16] text-[#4ade80] border-[#166534]"
-              : "bg-[#1a0000] text-[#f87171] border-[#7f1d1d]"
-          }`}
-        >
-          {isOnline ? "● TESTNET" : "● OFFLINE"}
-        </span>
-        <LiveClock />
+        <div className="flex items-center gap-3">
+          <button className="relative p-2 text-white/50 hover:text-white transition-colors rounded-full hover:bg-white/5">
+            <Bell size={16} />
+            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_5px_rgba(168,85,247,0.8)]" />
+          </button>
+          <div className="w-px h-4 bg-white/10" />
+          <LiveClock />
+        </div>
       </div>
     </header>
   );
@@ -63,14 +55,23 @@ export function TopNav() {
 
 function LiveClock() {
   const [time, setTime] = useState("");
+  
   useEffect(() => {
-    const tick = () =>
-      setTime(new Date().toLocaleTimeString("en-GB", { timeZone: "UTC", hour12: false }) + " UTC");
+    const tick = () => {
+      const now = new Date();
+      setTime(now.toLocaleTimeString("en-GB", { timeZone: "UTC", hour12: false }) + "." + now.getMilliseconds().toString().padStart(3, '0').slice(0,1) + " UTC");
+    };
     tick();
-    const id = setInterval(tick, 1000);
+    const id = setInterval(tick, 100);
     return () => clearInterval(id);
   }, []);
-  return <span className="font-mono text-[11px] text-[#52525b]">{time}</span>;
+  
+  return (
+    <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10">
+      <div className="w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_5px_rgba(59,130,246,0.8)] animate-pulse" />
+      <span className="font-mono tabular-nums tracking-wider text-[11px] text-white/70 min-w-[90px] text-right">
+        {time}
+      </span>
+    </div>
+  );
 }
-
-import { useState, useEffect } from "react";

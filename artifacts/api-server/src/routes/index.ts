@@ -5,6 +5,10 @@ import { logsRouter } from "./logs";
 import { credentialsRouter } from "./credentials";
 import { statsRouter } from "./stats";
 import { marketRouter } from "./market";
+import { analyticsRouter } from "./analytics";
+import { alertsRouter } from "./alerts";
+import { journalRouter } from "./journal";
+import { strategiesRouter } from "./strategies";
 
 const router: IRouter = Router();
 
@@ -14,5 +18,9 @@ router.use("/logs", logsRouter);
 router.use("/credentials", credentialsRouter);
 router.use("/stats", statsRouter);
 router.use("/market", marketRouter);
+router.use("/analytics", analyticsRouter);
+router.use("/alerts", alertsRouter);
+router.use("/journal", journalRouter);
+router.use("/strategies", strategiesRouter);
 
 export default router;

@@ -9,21 +9,13 @@ import type { OrderInputOrderType } from './orderInputOrderType';
 import type { OrderInputSide } from './orderInputSide';
 
 export interface OrderInput {
-  /** Trading pair symbol (e.g. BTCUSDT) */
   symbol: string;
   side: OrderInputSide;
   orderType: OrderInputOrderType;
   quantity: number;
-  /**
-     * Required for LIMIT orders
-     * @nullable
-     */
+  /** @nullable */
   price?: number | null;
-  /**
-     * Required for STOP_MARKET orders
-     * @nullable
-     */
+  /** @nullable */
   stopPrice?: number | null;
-  /** If true, uses Binance test endpoint (no real trade) */
   testMode?: boolean;
 }

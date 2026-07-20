@@ -6,11 +6,28 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from './advancedAnalytics';
+export * from './alert';
+export * from './alertDirection';
+export * from './alertInput';
+export * from './alertInputDirection';
+export * from './assetBalance';
 export * from './credentialsInput';
 export * from './credentialsStatus';
+export * from './dailyPnl';
+export * from './deleteAlert200';
+export * from './deleteJournalEntry200';
 export * from './errorResponse';
+export * from './getDailyPnlParams';
+export * from './getKlinesInterval';
+export * from './getKlinesParams';
 export * from './getLogsParams';
 export * from './healthStatus';
+export * from './journalEntry';
+export * from './journalEntrySentiment';
+export * from './journalInput';
+export * from './journalInputSentiment';
+export * from './kline';
 export * from './listOrdersParams';
 export * from './logEntry';
 export * from './order';
@@ -21,3 +38,6 @@ export * from './orderResult';
 export * from './orderStats';
 export * from './orderStatsBySide';
 export * from './orderStatsByType';
+export * from './strategySignal';
+export * from './strategySignalSignal';
+export * from './tickerData';
